@@ -35,7 +35,7 @@ const Navbar = () => {
   };
 
   return (
-    <section className="p-2 pl-5 pr-5 flex justify-between items-center bg-main shadow-md fixed w-full z-20 top-0">
+    <section className="p-2 pl-5 pr-5 flex justify-between items-center bg-main shadow-md fixed w-screen z-20 top-0">
       <Link href="/" className="flex items-center gap-1">
         <span className="fill-white">
           <IconWindmill width={50} />

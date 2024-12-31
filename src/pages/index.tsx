@@ -14,9 +14,10 @@ export default function Home() {
     <>
       <Head>
         <title>BEST Mostar</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main>
-        <div className="h-screen relative bg-[url(/img/home-bg.jpg)] bg-cover">
+        <div className="relative sm:w-[100%] h-screen sm:relative bg-[url(/img/home-bg.jpg)] bg-cover">
           <div
             className="w-[100%] sm:w-[37.5rem] sm:h-[12.5rem] bg-main absolute bottom-0 left-0 flex items-center
             custom-clip-path">

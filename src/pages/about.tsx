@@ -81,7 +81,7 @@ export async function getStaticProps() {
 const mockAboutUs = {
   data: {
     attributes: {
-      boardImage: '/path/to/board-image.jpg', // Replace with a path to a local static image
+      boardImage: '/assets/images/board-XI-image.jpg', // Replace with a path to a local static image
       aboutText: 'This is a mock description of the about page.',
     },
   },
