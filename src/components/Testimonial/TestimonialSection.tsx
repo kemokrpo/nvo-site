@@ -31,7 +31,8 @@ const TestemonialSection: FC = () => {
         Iskustva u suradnji
       </h1>
 
-      <div className="p-10 grid grid-cols-4 gap-10">
+      {/* Responsive Grid */}
+      <div className="p-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
         {Cards.map((el, i) => {
           return (
             <TestemonialCard

@@ -31,7 +31,7 @@ const mission = [
 
 const MissionSection: FC = () => {
   return (
-    <section className="bg-main pt-10 pb-10 sm:h-auto min-h-screen">
+    <section className="bg-main pt-10 pb-10 sm:h-auto h-auto">
       <h2 className="text-3xl sm:text-5xl font-bold text-center text-white">
         BEST Spirit
       </h2>

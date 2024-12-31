@@ -9,7 +9,7 @@ const PartnersSection: FC = () => {
       <h1 className="text-center text-main text-5xl font-bold pt-5 pb-10">
         Nasi partneri
       </h1>
-      <div className="w-4/5 m-auto grid grid-cols-4 gap-y-20 justify-between items-center flex-wrap p-10 gap-x-10 opacity-50">
+      <div className="w-4/5 m-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-10 sm:gap-x-10 p-10 opacity-50">
         <Image
           alt="logo-ipsum"
           src={logoIpsum}

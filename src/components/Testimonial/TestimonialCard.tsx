@@ -12,11 +12,11 @@ const TestemonialCard: FC<TProps> = ({ title, position, text }) => {
       <div className="flex items-center gap-4">
         <div className="bg-main w-10 h-10 rounded-full"></div>
         <div>
-          <h3 className="text-xl">{title}</h3>
+          <h3 className="text-xl text-gray-900">{title}</h3>
           <p className="text-sm text-gray-400">{position}</p>
         </div>
       </div>
-      <p className="pt-5">{text}</p>
+      <p className="pt-5 text-gray-700 text-sm sm:text-base">{text}</p>
     </div>
   );
 };
