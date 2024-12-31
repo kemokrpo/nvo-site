@@ -59,17 +59,18 @@ const About: NextPage = ({ aboutUs }: any) => {
 };
 
 export default About;
-
-export async function getStaticProps() {
-  const aboutUs = await fetcher(
-    `http://127.0.0.1:1337/api/about-us?populate=*`
-  );
-
-  console.log(aboutUs.data.attributes.boardImage);
-
-  return {
-    props: {
-      aboutUs,
-    },
-  };
-}
+{/* 
+  export async function getStaticProps() {
+    const aboutUs = await fetcher(
+      `http://127.0.0.1:1337/api/about-us?populate=*`
+    );
+    
+    console.log(aboutUs.data.attributes.boardImage);
+    
+    return {
+      props: {
+        aboutUs,
+      },
+    };
+  }
+  */}

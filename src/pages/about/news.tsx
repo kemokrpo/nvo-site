@@ -57,15 +57,17 @@ const Novosti: NextPage = ({ news }: any) => {
 
 export default Novosti;
 
-
-export async function getStaticProps() {
-  const news = await fetcher(
-    `http://127.0.0.1:1337/api/news?populate=*` // Update endpoint to match your API
-  );
-
-  return {
+{/* 
+  export async function getStaticProps() {
+    const news = await fetcher(
+      `http://127.0.0.1:1337/api/news?populate=*` // Update endpoint to match your API
+    );
+    
+    return {
     props: {
       news,
     },
   };
 }
+
+    */}
