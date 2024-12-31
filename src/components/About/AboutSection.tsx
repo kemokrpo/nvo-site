@@ -28,7 +28,7 @@ const AboutSection: FC = () => {
           postojanja izrasla je u jednu od najprepoznatljivih studentskih
           organizacija u Mostaru. Zahvaljujući zalaganju mladih i
           entuzijastičnih članova organizacije, studentima Univerziteta je
-          omogućeno povezivanje, razmjena i saradnja sa studentima iz cjele
+          omogućeno povezivanje, razmjena i saradnja sa studentima iz cijele
           Evrope.
         </p>
       </div>
