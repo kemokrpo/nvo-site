@@ -75,11 +75,7 @@ export async function getStaticProps() {
   };
 }
 */}
-import { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import bg from "@/assets/images/hackathon.jpg";
-import AboutBoard from "@/components/About/AboutBoard";
+
 
 // pages/about.tsx
 const mockAboutUs = {

@@ -11,7 +11,7 @@ const MissionCircle: FC<TProps> = ({ icon, title }) => {
       <div className="w-[10rem] h-[10rem] rounded-full bg-white flex justify-center items-center fill-main">
         {icon}
       </div>
-      <h4 className="text-3xl text-white">{title}</h4>
+      <h4 className="text-xl sm:text-3xl text-white">{title}</h4>
     </div>
   );
 };

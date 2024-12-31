@@ -18,11 +18,8 @@ export default function Home() {
       <main>
         <div className="h-screen relative bg-[url(/img/home-bg.jpg)] bg-cover">
           <div
-            className="w-[37.5rem] h-[12.5rem] bg-main absolute bottom-0 left-0 flex items-center"
-            style={{
-              clipPath: "polygon(0 0, 52% 0, 100% 100%, 0% 100%)",
-            }}
-          >
+            className="w-[100%] sm:w-[37.5rem] sm:h-[12.5rem] bg-main absolute bottom-0 left-0 flex items-center
+            custom-clip-path">
             <Image src={bg} alt="BEST Motto" width={350} height={350} />
           </div>
         </div>

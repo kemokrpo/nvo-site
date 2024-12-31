@@ -10,7 +10,7 @@ const AboutSection: FC = () => {
         <div className="bg-red-200 w-max pl-2 pr-2 pt-1 pb-1 rounded-md">
           <h5 className="text-sm text-main font-medium">ABOUT US</h5>
         </div>
-        <h2 className="mt-1 text-3xl font-bold text-gray-900">
+        <h2 className="mt-1 text-3xl font-bold text-gray-900 sm:text-main md:text-blue">
           Ukratko o nama
         </h2>
         <p className="mt-5 text-gray-700 text-justify">

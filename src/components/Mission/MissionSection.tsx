@@ -31,11 +31,11 @@ const mission = [
 
 const MissionSection: FC = () => {
   return (
-    <section className="h-[30rem] bg-main">
-      <h2 className="text-5xl font-bold text-center text-white pt-10">
+    <section className="bg-main pt-10 pb-10 sm:h-auto min-h-screen">
+      <h2 className="text-3xl sm:text-5xl font-bold text-center text-white">
         BEST Spirit
       </h2>
-      <div className="flex items-center p-[4rem_5rem] justify-between">
+      <div className="flex flex-col sm:flex-row items-center sm:p-[4rem_5rem] p-4 justify-between">
         {mission.map((el, i) => {
           return <MissionCircle key={i} icon={el.icon} title={el.title} />;
         })}

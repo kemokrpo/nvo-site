@@ -14,3 +14,18 @@
 body {
   @apply bg-gray-100;
 }
+
+
+/* styles.css */
+.custom-clip-path {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  bottom: -2px;
+  
+}
+
+
+@media (min-width: 640px) {
+  .custom-clip-path {
+    clip-path: polygon(0 0, 52% 0, 100% 100%, 0% 100%);
+  }
+}
