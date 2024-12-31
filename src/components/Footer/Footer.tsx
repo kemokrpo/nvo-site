@@ -12,7 +12,7 @@ const Footer: FC = () => {
           <Image alt="BEST Mostar logo" src={logo} width={250} height={250} />
         </div>
         <h3 className="mt-5 text-gray-200 text-sm">
-          © 2023 • Made with ♥ by BEST Mostar
+          © 2025 • Made with ♥ by BEST Mostar
         </h3>
       </div>
       <div>
@@ -31,7 +31,7 @@ const Footer: FC = () => {
       </div>
       <div>
         <h2 className="text-xl text-gray-100 mb-3">Adresa</h2>
-        <h3 className="text-gray-300 underline text-lg">Adresa BB</h3>
+        <h3 className="text-gray-300 underline text-lg">USRC Midhat Hujdur Hujka, <br></br> Sjeverni logor bb, <br></br> Mostar, 88000 <br></br> Bosna i Herzegovina</h3>
       </div>
       <div className="flex flex-col">
         <h2 className="text-xl text-gray-100 mb-3">Zaprati nas</h2>

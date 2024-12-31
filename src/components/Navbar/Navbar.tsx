@@ -46,16 +46,18 @@ const Navbar = () => {
             <Link
               href="https://course25-best-mostar.org/"
               className="hover:underline"
+              target="_blank"
             >
               Proljetni seminar
             </Link>
             <Link
               href="https://hackathon-bestmostar.org/"
               className="hover:underline"
+              target="_blank"
             >
               Hackathon
             </Link>
-            <Link href="https://jobfairmostar.org/">
+            <Link href="https://jobfairmostar.org/" target="_blank">
               JobFair
             </Link>
           </div>
