@@ -78,6 +78,7 @@ export async function getStaticProps() {
 
 
 // pages/about.tsx
+import { format } from 'date-fns';
 const mockAboutUs = {
   data: {
     attributes: {
@@ -88,6 +89,8 @@ const mockAboutUs = {
 };
 
 const AboutPage = ({ aboutUs }: any) => {
+  const formattedDate = format(new Date(), 'yyyy-MM-dd'); // Customize the format as needed
+
   return (
     <div className="about-container">
       <h1>About Us</h1>
@@ -95,6 +98,7 @@ const AboutPage = ({ aboutUs }: any) => {
         <img src={aboutUs.data.attributes.boardImage} alt="Board Image" />
       </div>
       <p>{aboutUs.data.attributes.aboutText}</p>
+      <p>{formattedDate}</p> {/* Render the formatted date */}
     </div>
   );
 };

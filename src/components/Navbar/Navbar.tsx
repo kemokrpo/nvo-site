@@ -59,13 +59,15 @@ const Navbar = () => {
         {/* O nama Dropdown */}
         <li
           className="hover:underline relative group"
+          onMouseEnter={() => setONamaOpen(true)}
+          onMouseLeave={() => setONamaOpen(false)}
         >
           <button className="cursor-pointer" onClick={toggleONama}>
             O nama
           </button>
           {/* Dropdown for O nama */}
           <div
-            className={`absolute p-5 bg-main z-30 top-10 translate-x-[-1rem] flex flex-col gap-4 rounded-md text-sm w-[11rem] ${oNamaOpen ? 'block' : 'hidden'}`}
+            className={`absolute p-5 bg-main z-30 top-10 translate-x-[-1rem] translate-y-[-1rem] flex flex-col gap-4 rounded-md text-sm w-[11rem] ${oNamaOpen ? 'block' : 'hidden'}`}
           >
             <Link href="/about" className="hover:underline">
               BEST Mostar
@@ -85,13 +87,15 @@ const Navbar = () => {
         {/* Projekti Dropdown */}
         <li
           className="hover:underline relative group"
+          onMouseEnter={() => setProjektiOpen(true)}
+          onMouseLeave={() => setProjektiOpen(false)}
         >
           <button className="cursor-pointer" onClick={toggleProjekti}>
             Projekti
           </button>
           {/* Dropdown for Projekti */}
           <div
-            className={`absolute p-5 bg-main z-30 top-10 translate-x-[-1rem] flex flex-col gap-4 rounded-md text-sm w-[11rem] ${projektiOpen ? 'block' : 'hidden'}`}
+            className={`absolute p-5 bg-main z-30 top-10 translate-x-[-1rem] translate-y-[-1rem] flex flex-col gap-4 rounded-md text-sm w-[11rem] ${projektiOpen ? 'block' : 'hidden'}`}
           >
             <Link
               href="https://course25-best-mostar.org/"
