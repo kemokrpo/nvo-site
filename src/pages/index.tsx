@@ -17,11 +17,11 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main>
-        <div className="relative w-full h-screen relative bg-[url(/img/home-bg.jpg)] bg-cover bg-center bg-no-repeat">
+        <div className="relative w-full h-[32vh] sm:h-screen relative bg-[url(/img/home-bg.jpg)] bg-cover bg-center bg-no-repeat bg-left">
           <div
-            className="w-full sm:w-[37.5rem] sm:h-[12.5rem] bg-main absolute bottom-0 left-0 flex items-center custom-clip-path"
+            className="w-full sm:w-[37.5rem] sm:h-[12.5rem] bg-main absolute bottom-0 left-0 flex items-center custom-clip-path translate-y-20 sm:translate-y-0"
           >
-            <div className="relative w-full h-full">
+            <div className="relative h-[150px] w-full sm:h-full">
               <Image
                 src={bg}
                 alt="BEST Motto"
@@ -32,12 +32,14 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <MissionSection />
-        <AboutSection />
-        <MilestoneBar />
-        <TestimonialSection />
-        <Projects />
-        <PartnersSection />
+        <div className="mt-20 sm:mt-0">
+          <MissionSection />
+          <AboutSection />
+          <MilestoneBar />
+          <TestimonialSection />
+          <Projects />
+          <PartnersSection />
+        </div>
       </main>
     </>
   );

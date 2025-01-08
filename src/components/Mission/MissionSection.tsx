@@ -35,7 +35,7 @@ const MissionSection: FC = () => {
       <h2 className="text-3xl sm:text-5xl font-bold text-center text-white sm:translate-x-[-1rem]">
         BEST Spirit
       </h2>
-      <div className="flex flex-col sm:flex-row items-center sm:p-[4rem_5rem] p-4 justify-between">
+      <div className="flex flex-col sm:flex-row items-center sm:p-[4rem_5rem] p-4 justify-between sm:gap-12 gap-12">
         {mission.map((el, i) => {
           return <MissionCircle key={i} icon={el.icon} title={el.title} />;
         })}

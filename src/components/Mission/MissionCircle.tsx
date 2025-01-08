@@ -7,7 +7,7 @@ type TProps = {
 
 const MissionCircle: FC<TProps> = ({ icon, title }) => {
   return (
-    <div className="flex justify-center items-center flex-col gap-5">
+    <div className="flex justify-center items-center flex-col gap-3 sm:gap-5">
       <div className="w-[10rem] h-[10rem] rounded-full bg-white flex justify-center items-center fill-main">
         {icon}
       </div>
