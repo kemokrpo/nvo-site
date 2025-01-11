@@ -9,7 +9,7 @@ const AboutSection: FC = () => {
       {/* Left Side (Text Content) */}
       <div className="w-full sm:w-1/2 h-full">
         <div className="bg-red-200 w-max pl-2 pr-2 pt-1 pb-1 rounded-md">
-          <h5 className="text-sm text-main font-medium">ABOUT US</h5>
+          <h5 className="text-sm text-main-700 font-medium">ABOUT US</h5>
         </div>
         <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-gray-900 md:text-blue">
           Ukratko o nama

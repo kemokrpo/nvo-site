@@ -17,9 +17,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main>
-        <div className="relative w-full h-[32vh] sm:h-screen relative bg-[url(/img/home-bg.jpg)] bg-cover bg-center bg-no-repeat bg-left">
+        <div className="relative w-full h-[32vh] sm:h-screen relative bg-[url(/img/home-bg.jpg)] bg-cover bg-center bg-no-repeat">
           <div
-            className="w-full sm:w-[37.5rem] sm:h-[12.5rem] bg-main absolute bottom-0 left-0 flex items-center custom-clip-path translate-y-20 sm:translate-y-0"
+            className="w-full sm:w-[37.5rem] sm:h-[12.5rem] bg-main-700 absolute bottom-0 left-0 flex items-center custom-clip-path translate-y-20 sm:translate-y-0"
           >
             <div className="relative h-[150px] w-full sm:h-full">
               <Image

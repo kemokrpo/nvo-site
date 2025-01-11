@@ -18,7 +18,7 @@ const caculateYearsSince = (dateString: string): number => {
 const Projects: FC = () => {
   const years = useMemo(() => caculateYearsSince("2011-12-22"), []);
   return (
-    <section className="bg-main flex flex-col sm:flex-row justify-evenly p-10 gap-10 sm:gap-0">
+    <section className="bg-main-700 flex flex-col sm:flex-row justify-evenly p-10 gap-10 sm:gap-0">
       <div className="flex flex-col items-center gap-3">
         <span className="fill-white">
           <IconCake width={100} />
