@@ -26,7 +26,7 @@ const AboutBoard: FC<TProps> = ({ about }) => {
   };
 
   return (
-    <section className="flex justify-between bg-gray-800 mb-10">
+    <section className="flex justify-between bg-gray-100 mb-10 text-black">
       <div className="relative flex justify-center w-3/4">
         <Image
           src={"me.png"}
@@ -38,7 +38,7 @@ const AboutBoard: FC<TProps> = ({ about }) => {
         />
       </div>
       <div className=" ml-5 w-1/2 p-10">
-        <div className="bg-gray-200 w-max pl-2 pr-2 pt-1 pb-1 mb-2 rounded-md">
+        <div className="bg-white w-max pl-2 pr-2 pt-1 pb-1 mb-2 rounded-md">
           <h5 className="text-sm text-gray-600 font-medium">
             {about.boardName}
           </h5>

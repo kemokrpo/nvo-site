@@ -119,7 +119,7 @@ const Navbar = () => {
 
         {/* Novosti Link */}
         <li className="hover:underline">
-          <Link href="/about/news">Novosti</Link>
+          <Link href="/news">Novosti</Link>
         </li>
 
         {/* Pridruzi nam se Link */}

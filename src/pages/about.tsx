@@ -1,4 +1,3 @@
-{/*
 import { NextPage } from "next";
 import Head from "next/head";
 import { fetcher } from "../../lib/api";
@@ -62,11 +61,10 @@ const About: NextPage = ({ aboutUs }: any) => {
 export default About;
 
 export async function getStaticProps() {
-  const aboutUs = await fetcher(
-    `http://127.0.0.1:1337/api/about-us?populate=*`
-  );
+  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL; // Use environment variable
+  const aboutUs = await fetcher(`${apiUrl}/api/about-us?populate=*`);
 
-  console.log(aboutUs.data.attributes.boardImage);
+  {console.log(aboutUs.data.attributes.boardImage);}
 
   return {
     props: {
@@ -74,12 +72,14 @@ export async function getStaticProps() {
     },
   };
 }
-*/}
+
 
 
 // pages/about.tsx
-import { format } from 'date-fns';
-const mockAboutUs = {
+{/*
+
+  import { format } from 'date-fns';
+  const mockAboutUs = {
   data: {
     attributes: {
       boardImage: '/assets/images/board-XI-image.jpg', // Replace with a path to a local static image
@@ -98,7 +98,7 @@ const AboutPage = ({ aboutUs }: any) => {
         <img src={aboutUs.data.attributes.boardImage} alt="Board Image" />
       </div>
       <p>{aboutUs.data.attributes.aboutText}</p>
-      <p>{formattedDate}</p> {/* Render the formatted date */}
+      <p>{formattedDate}</p> {/* Render the formatted date *//*}
     </div>
   );
 };
@@ -114,3 +114,4 @@ export async function getStaticProps() {
 
 export default AboutPage;
 
+*/}
