@@ -55,7 +55,7 @@ const Footer: FC = () => {
           className="text-gray-300 underline text-lg mb-5 break-words"
           target="_blank"
         >
-          Linkedin
+          LinkedIn
         </Link>
       </div>
     </footer>
