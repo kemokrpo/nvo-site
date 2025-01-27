@@ -1,4 +1,4 @@
-import { NextPage } from "next";
+{/*import { NextPage } from "next";
 import Head from "next/head";
 import { fetcher } from "../../lib/api";
 import Image from "next/image";
@@ -34,4 +34,4 @@ export async function getStaticProps() {
       aboutUs,
     },
   };
-}
+}*/}

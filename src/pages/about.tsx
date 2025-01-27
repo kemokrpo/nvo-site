@@ -1,4 +1,5 @@
-import { NextPage } from "next";
+{/*
+  import { NextPage } from "next";
 import Head from "next/head";
 import { fetcher } from "../../lib/api";
 import Image from "next/image";
@@ -72,11 +73,11 @@ export async function getStaticProps() {
     },
   };
 }
-
-
+*/
+}
 
 // pages/about.tsx
-{/*
+
 
   import { format } from 'date-fns';
   const mockAboutUs = {
@@ -98,7 +99,7 @@ const AboutPage = ({ aboutUs }: any) => {
         <img src={aboutUs.data.attributes.boardImage} alt="Board Image" />
       </div>
       <p>{aboutUs.data.attributes.aboutText}</p>
-      <p>{formattedDate}</p> {/* Render the formatted date *//*}
+      <p>{formattedDate}</p> {/* Render the formatted date */}
     </div>
   );
 };
@@ -114,4 +115,4 @@ export async function getStaticProps() {
 
 export default AboutPage;
 
-*/}
+
