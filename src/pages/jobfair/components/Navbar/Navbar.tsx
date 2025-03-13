@@ -1,46 +1,23 @@
-"use client";
+"use client"; // Ensure this is at the top for client-side execution
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useState } from "react";
 import Link from "next/link";
 import IconWindmill from "../../../../components/Icons/IconWindmill";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [projektiOpen, setProjektiOpen] = useState(false);
-  const [oNamaOpen, setONamaOpen] = useState(false);
-
-  const router = useRouter();
-
-  // Reset dropdowns when route changes
-  useEffect(() => {
-    setProjektiOpen(false);
-    setONamaOpen(false);
-    setMenuOpen(false);
-  }, [router.asPath]); // Triggered when route changes
 
   // Toggle navigation menu on mobile
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  // Toggle Projekti dropdown and close O nama if open
-  const toggleProjekti = () => {
-    setProjektiOpen(!projektiOpen);
-    if (oNamaOpen) setONamaOpen(false); // Close O nama if Projekti is opened
-  };
-
-  // Toggle O nama dropdown and close Projekti if open
-  const toggleONama = () => {
-    setONamaOpen(!oNamaOpen);
-    if (projektiOpen) setProjektiOpen(false); // Close Projekti if O nama is opened
-  };
-
   return (
-    <section className="p-2 pl-5 pr-5 flex justify-between items-center bg-blue-700 shadow-md fixed w-full z-20 top-0 left-0">
+    <section className="p-2 pl-5 pr-5 flex justify-between items-center bg-blue-900 shadow-md fixed w-full z-20 top-0 left-0">
+      {/* Logo */}
       <Link href="/" className="flex items-center gap-1">
         <span className="fill-white">
           <IconWindmill width={50} />
         </span>
-        <h1 className="text-xl text-white font-medium tracking-wider">
+        <h1 className="text-xl text-white font-medium tracking-normal">
           BEST Mostar
         </h1>
       </Link>
@@ -52,145 +29,55 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Navigation Menu */}
-      <ul
-        className={`hidden md:flex space-x-6 text-white tracking-wide relative ${menuOpen ? "flex-col absolute bg-main-700 p-5 top-16 right-10 w-4/5" : ""}`}
-      >
-        {/* O nama Dropdown */}
-        <li
-          className="hover:underline relative group"
-          onMouseEnter={() => setONamaOpen(true)}
-          onMouseLeave={() => setONamaOpen(false)}
-        >
-          <button className="cursor-pointer" onClick={toggleONama}>
-            O nama
-          </button>
-          {/* Dropdown for O nama */}
-          <div
-            className={`absolute p-5 bg-main-700 z-30 top-10 translate-x-[-1rem] translate-y-[-1rem] flex flex-col gap-4 rounded-md text-sm w-[11rem] ${oNamaOpen ? 'block' : 'hidden'}`}
-          >
-            <Link href="/about" className="hover:underline">
-              BEST Mostar
-            </Link>
-            <Link href="/about/teams" className="hover:underline">
-              Timovi
-            </Link>
-            <Link
-              href="https://www.best.eu.org/index.jsp"
-              className="hover:underline"
-            >
-              BEST International
-            </Link>
-          </div>
+      {/* Desktop Navigation */}
+      <ul className="hidden md:flex space-x-6 text-white">
+      <li className="hover:underline">
+          <Link href="/">Home</Link>
         </li>
-
-        {/* Projekti Dropdown */}
-        <li
-          className="hover:underline relative group"
-          onMouseEnter={() => setProjektiOpen(true)}
-          onMouseLeave={() => setProjektiOpen(false)}
-        >
-          <button className="cursor-pointer" onClick={toggleProjekti}>
-            Projekti
-          </button>
-          {/* Dropdown for Projekti */}
-          <div
-            className={`absolute p-5 bg-main-700 z-30 top-10 translate-x-[-1rem] translate-y-[-1rem] flex flex-col gap-4 rounded-md text-sm w-[11rem] ${projektiOpen ? 'block' : 'hidden'}`}
-          >
-            <Link
-              href="https://course25-best-mostar.org/"
-              className="hover:underline"
-              target="_blank"
-            >
-              Proljetni seminar
-            </Link>
-            <Link
-              href="https://hackathon-bestmostar.org/"
-              className="hover:underline"
-              target="_blank"
-            >
-              Hackathon
-            </Link>
-            <Link href="https://jobfairmostar.org/" target="_blank">
-              JobFair
-            </Link>
-          </div>
-        </li>
-
-        {/* Novosti Link */}
         <li className="hover:underline">
-          <Link href="/news">Novosti</Link>
+          <Link href="/jobfair/agenda">Agenda</Link>
         </li>
-
-        {/* Pridruzi nam se Link */}
         <li className="hover:underline">
-          <Link href="/about">Pridruzi nam se</Link>
+          <Link href="/jobfair/partners">Partners</Link>
+        </li>
+        <li className="hover:underline">
+          <Link href="/jobfair/history">History</Link>
+        </li>
+        <li className="hover:underline">
+          <Link href="https://best.eu.org" target="_blank" className="text-orange-500">
+            BEST International
+          </Link>
         </li>
       </ul>
 
       {/* Mobile Navigation */}
       <ul
-        className={`md:hidden flex flex-col space-y-4 text-white tracking-wide ${menuOpen ? "absolute top-16 right-0 bg-main-700 p-5 w-full" : "hidden"}`}
+        className={`md:hidden flex flex-col space-y-4 text-white bg-blue-900 absolute top-16 right-0 p-5 w-full ${
+          menuOpen ? "block" : "hidden"
+        }`}
       >
-        {/* O nama Dropdown for Mobile */}
-        <li className="hover:underline relative group">
-          <button onClick={toggleONama} className="cursor-pointer">
-            O nama
-          </button>
-          {oNamaOpen && (
-            <div className="absolute p-5 bg-main-700 z-30 top-0 right-0 flex flex-col gap-4 rounded-md text-sm w-[11rem]">
-              <Link href="/about" className="hover:underline">
-                BEST Mostar
-              </Link>
-              <Link href="/about/teams" className="hover:underline">
-                Timovi
-              </Link>
-              <Link
-                href="https://www.best.eu.org/index.jsp"
-                className="hover:underline"
-              >
-                BEST International
-              </Link>
-            </div>
-          )}
-        </li>
-
-        {/* Projekti Dropdown for Mobile */}
-        <li className="hover:underline relative group">
-          <button onClick={toggleProjekti} className="cursor-pointer">
-            Projekti
-          </button>
-          {projektiOpen && (
-            <div className="absolute p-5 bg-main-700 z-30 translate-y-[-4rem] right-0 flex flex-col gap-4 rounded-md text-sm w-[11rem]">
-              <Link
-                href="https://course25-best-mostar.org/"
-                className="hover:underline"
-                target="_blank"
-              >
-                Proljetni seminar
-              </Link>
-              <Link
-                href="https://hackathon-bestmostar.org/"
-                className="hover:underline"
-                target="_blank"
-              >
-                Hackathon
-              </Link>
-              <Link href="https://jobfairmostar.org/" target="_blank">
-                JobFair
-              </Link>
-            </div>
-          )}
-        </li>
-
-        {/* Novosti Link */}
         <li className="hover:underline">
-          <Link href="/about/news">Novosti</Link>
+          <Link href="/">Home</Link>
         </li>
-
-        {/* Pridruzi nam se Link */}
         <li className="hover:underline">
-          <Link href="/about">Pridruzi nam se</Link>
+          <Link href="/agenda" onClick={() => setMenuOpen(false)}>
+            Agenda
+          </Link>
+        </li>
+        <li className="hover:underline">
+          <Link href="/partners" onClick={() => setMenuOpen(false)}>
+            Partners
+          </Link>
+        </li>
+        <li className="hover:underline">
+          <Link href="/history" onClick={() => setMenuOpen(false)}>
+            History
+          </Link>
+        </li>
+        <li className="hover:underline">
+          <Link href="https://best.eu.org" className="text-orange-500" target="_blank" onClick={() => setMenuOpen(false)}>
+            BEST International
+          </Link>
         </li>
       </ul>
     </section>
