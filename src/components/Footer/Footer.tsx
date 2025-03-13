@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const Footer: FC = () => {
   return (
-    <footer className="bg-gray-900 p-10 md:p-20 grid gap-10 md:gap-20 grid-cols-1 md:grid-cols-5 w-full">
+    <footer className="bg-gray-900 p-10 lg:p-20 grid gap-10 lg:gap-20 grid-cols-1 lg:grid-cols-5 w-full">
       <div className="flex flex-col items-start">
         <Image alt="BEST Mostar logo" src={logo} width={250} height={250} />
         <h3 className="mt-5 text-gray-200 text-sm whitespace-normal break-words">

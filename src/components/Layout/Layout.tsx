@@ -1,6 +1,7 @@
 import { FC } from "react";
 import Footer from "../Footer/Footer";
 import Navbar from "../Navbar/Navbar";
+import Header from "../Header/Header";
 
 type TProps = {
   children: JSX.Element;
@@ -8,7 +9,8 @@ type TProps = {
 
 const Layout: FC<TProps> = ({ children }) => {
   return (
-    <div className="font-roboto">
+    <div className="font-roboto dark:bg-dbg-dark">
+      <Header />
       <Navbar />
       <div className="pt-5">{children}</div>
       <Footer />

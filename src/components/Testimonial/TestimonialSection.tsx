@@ -26,7 +26,7 @@ const Cards = [
 
 const TestemonialSection: FC = () => {
   return (
-    <section className="bg-gray-100 pb-20">
+    <section className="bg-gray-100 dark:bg-dbg-dark pb-20">
       <h1 className="text-center text-main-700 text-5xl font-bold pt-5 pb-10">
         Iskustva u suradnji
       </h1>

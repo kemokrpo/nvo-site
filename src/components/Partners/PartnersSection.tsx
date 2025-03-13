@@ -5,7 +5,7 @@ import logoIpsum from "@/assets/images/logo-ipsum.svg";
 
 const PartnersSection: FC = () => {
   return (
-    <section className="pb-10 bg-gray-100 pt-20">
+    <section className="pb-10 bg-gray-100 dark:bg-dbg-dark pt-20">
       <h1 className="text-center text-main-700 text-5xl font-bold pt-5 pb-10">
         Nasi partneri
       </h1>

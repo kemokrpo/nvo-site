@@ -20,25 +20,25 @@ const Projects: FC = () => {
   return (
     <section className="bg-main-700 flex flex-col sm:flex-row justify-evenly p-10 gap-10 sm:gap-0">
       <div className="flex flex-col items-center gap-3">
-        <span className="fill-white">
+        <span className="fill-white dark:fill-dt-light">
           <IconCake width={100} />
         </span>
-        <h4 className="text-3xl text-white font-bold">{years}</h4>
-        <h3 className="text-xl text-white">Godine postojanja</h3>
+        <h4 className="text-3xl text-white font-bold dark:text-dt-light">{years}</h4>
+        <h3 className="text-xl text-white dark:text-dt-light">Godine postojanja</h3>
       </div>
       <div className="flex flex-col items-center gap-3">
-        <span className="fill-white">
+        <span className="fill-white dark:fill-dt-light">
           <IconProject width={100} />
         </span>
-        <h4 className="text-3xl text-white font-bold">3</h4>
-        <h3 className="text-xl text-white">Projekata godisnje</h3>
+        <h4 className="text-3xl text-white font-bold dark:text-dt-light">3</h4>
+        <h3 className="text-xl text-white dark:text-dt-light">Projekata godisnje</h3>
       </div>
       <div className="flex flex-col items-center gap-3">
-        <span className="fill-white">
+        <span className="fill-white dark:fill-dt-light">
           <IconGroup width={100} />
         </span>
-        <h4 className="text-3xl text-white font-bold">20 +</h4>
-        <h3 className="text-xl text-white">Aktivnih clanova</h3>
+        <h4 className="text-3xl text-white font-bold dark:text-dt-light">20 +</h4>
+        <h3 className="text-xl text-white dark:text-dt-light">Aktivnih clanova</h3>
       </div>
     </section>
   );

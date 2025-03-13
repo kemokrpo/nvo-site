@@ -22,9 +22,23 @@ body {
   bottom: -2px;
 }
 
-
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .custom-clip-path {
     clip-path: polygon(0 0, 52% 0, 100% 100%, 0% 100%);
   }
+}
+
+@media (max-width: 767px){
+  .image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+}
+
+
+
+
+body, html {
+  overflow-x: hidden;
 }

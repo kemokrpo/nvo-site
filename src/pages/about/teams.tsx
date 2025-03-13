@@ -12,7 +12,7 @@ import IconDesign from "@/components/Icons/IconDesign";
 const Teams: NextPage = () => {
   return (
     <section className="h-min p-[5rem_5rem]">
-      <div className="w-full relative h-[40vh]">
+      <div className="w-full relative h-[20vh] sm:h-[40vh]">
         <Image
           src={team}
           alt="Team"
@@ -24,10 +24,10 @@ const Teams: NextPage = () => {
       <div className="bg-red-200 w-max mt-5 pl-2 pr-2 pt-1 pb-1 rounded-md">
         <h5 className="text-sm text-main font-medium">TEAMS</h5>
       </div>
-      <h2 className="mt-1 text-3xl font-bold text-gray-900">
+      <h2 className="mt-1 text-3xl font-bold text-gray-900 dark:text-dt-dark">
         Timovi unutar BEST-a
       </h2>
-      <p className="text-gray-700 mt-3 text-justify">
+      <p className="text-gray-700 dark:text-dt-dark mt-3 text-justify">
         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus
         pariatur, facere maiores unde error rerum dolorum dolorem enim eius
         fugiat porro odit, earum a. Beatae perferendis, possimus asperiores at
