@@ -100,18 +100,18 @@ const Navbar = () => {
             <Link
               href="https://course25-best-mostar.org/"
               className="hover:underline"
-              target="_blank"
+              target=""
             >
               Proljetni seminar
             </Link>
             <Link
-              href="https://hackathon-bestmostar.org/"
+              href="/hackathon"
               className="hover:underline"
-              target="_blank"
+              target=""
             >
               Hackathon
             </Link>
-            <Link href="/jobfair" target="_blank">
+            <Link href="/jobfair" target="">
               JobFair
             </Link>
           </div>

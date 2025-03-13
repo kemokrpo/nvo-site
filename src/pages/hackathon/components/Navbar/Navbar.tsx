@@ -11,7 +11,7 @@ const Navbar = () => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   return (
-    <section className="p-2 pl-5 pr-5 flex justify-between items-center bg-blue-900 shadow-md fixed w-full z-20 top-0 left-0">
+    <section className="p-2 pl-5 pr-5 flex justify-between items-center bg-purple-900 shadow-md fixed w-full z-20 top-0 left-0">
       {/* Logo */}
       <Link href="/" className="flex items-center gap-1">
         <span className="fill-white">
@@ -32,7 +32,7 @@ const Navbar = () => {
       {/* Desktop Navigation */}
       <ul className="hidden md:flex space-x-6 text-white">
       <li className="hover:underline">
-          <Link href="/jobfair">Home</Link>
+          <Link href="/hackathon">Home</Link>
         </li>
         <li className="hover:underline">
           <Link href="/jobfair/agenda">Agenda</Link>
