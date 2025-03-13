@@ -1,4 +1,4 @@
-// pages/course.js
+
 export default function PlaceHolder() {
     return (
       <div>
