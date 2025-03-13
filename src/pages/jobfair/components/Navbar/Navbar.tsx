@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import IconWindmill from "../Icons/IconWindmill";
+import IconWindmill from "../../../../components/Icons/IconWindmill";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -35,7 +35,7 @@ const Navbar = () => {
   };
 
   return (
-    <section className="p-2 pl-5 pr-5 flex justify-between items-center bg-main-700 shadow-md fixed w-full z-20 top-0 left-0">
+    <section className="p-2 pl-5 pr-5 flex justify-between items-center bg-blue-700 shadow-md fixed w-full z-20 top-0 left-0">
       <Link href="/" className="flex items-center gap-1">
         <span className="fill-white">
           <IconWindmill width={50} />
@@ -111,7 +111,7 @@ const Navbar = () => {
             >
               Hackathon
             </Link>
-            <Link href="/jobfair" target="_blank">
+            <Link href="https://jobfairmostar.org/" target="_blank">
               JobFair
             </Link>
           </div>
