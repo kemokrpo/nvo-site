@@ -13,12 +13,12 @@ module.exports = {
     extend: {
       colors: {
         dbg: {
-          light: "#ffffff", // Default background for light mode
-          dark: "#0f0f0f", // Background for dark mode
+          light: "#b0b0b0", // Default background for light mode
+          dark: "#151515", // Background for dark mode
         },
         dt: {
-          light: "#1a1a1a", // Text color for light mode
-          dark: "#f5f5f5", // Text color for dark mode
+          light: "#151515", // Text color for light mode
+          dark: "#f0f0f0", // Text color for dark mode
         },
         main: {
           100: "#721011",

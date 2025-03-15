@@ -31,12 +31,12 @@ const Navbar = () => {
   };
 
   return (
-    <section className="p-2 pl-5 pr-5 flex justify-between items-center bg-main-700 shadow-md fixed w-full z-20 top-[1.2rem] left-0">
-      <Link href="/" className="flex items-center gap-1 mt-[-1rem]">
-        <span className="fill-white dark:fill-dbg-dark">
+    <section className="p-2 pl-5 pr-5 flex justify-between items-center bg-main-700 shadow-md fixed w-full z-30 top-[2.1rem] left-0">
+      <Link href="/" className="flex items-center gap-1 mt-[-2.1rem]">
+        <span className="fill-white dark:fill-dbg-light">
           <IconWindmill width={70} />
         </span>
-        <h1 className="text-2xl text-white dark:text-dt-light font-medium tracking-wider">BEST Mostar</h1>
+        <h1 className="text-2xl text-white dark:text-dt-dark font-medium tracking-wider">BEST Mostar</h1>
       </Link>
 
       <div className="md:hidden">
@@ -46,7 +46,7 @@ const Navbar = () => {
       </div>
 
       <ul
-        className={`hidden md:flex space-x-6 text-white dark:text-dt-light tracking-wide relative ${menuOpen ? "flex-col absolute bg-main-700 p-5 top-16 right-10 w-4/5" : ""}`}
+        className={`hidden md:flex space-x-6 text-white dark:text-dt-dark tracking-wide relative ${menuOpen ? "flex-col absolute bg-main-700 p-5 top-16 right-10 w-4/5" : ""}`}
       >
         {/* O nama Dropdown */}
         <li

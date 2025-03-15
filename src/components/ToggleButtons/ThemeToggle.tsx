@@ -27,7 +27,7 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="p-0.5 text-xs rounded-full bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-white"
+      className="p-1 text-xs rounded-full bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-white"
     >
       <span className="text-xs"> {/* Use smaller emoji size */}
         {isDarkMode ? "🌙" : "☀️"}

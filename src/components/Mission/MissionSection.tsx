@@ -32,7 +32,7 @@ const mission = [
 const MissionSection: FC = () => {
   return (
     <section className="bg-main-700 pt-10 pb-10 sm:h-auto h-auto">
-      <h2 className="text-3xl sm:text-5xl font-bold text-center text-white dark:text-dt-light sm:translate-x-[-0rem]">
+      <h2 className="text-3xl sm:text-5xl font-bold text-center text-white dark:text-dt-dark sm:translate-x-[-0rem]">
         BEST Spirit
       </h2>
       <div className="flex flex-col md:flex-row items-center sm:p-[4rem_5rem] p-4 justify-between sm:gap-12 gap-12">

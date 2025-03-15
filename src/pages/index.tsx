@@ -27,7 +27,7 @@ export default function Home() {
         alt="BEST Motto"
         width={350}
         height={350}
-        className="sm:translate-x-3 translate-x-4 translate-y-5 sm:translate-y-0 dark:invert"
+        className="sm:translate-x-3 translate-x-4 translate-y-5 sm:translate-y-0"
       />
     </div>
   </div>

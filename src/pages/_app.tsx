@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import Layout from "@/components/Layout/Layout";
 import JobFairLayout from "@/pages/jobfair/components/Layout/Layout";
 import HackathonLayout from "@/pages/hackathon/components/Layout/Layout";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { pathname } = useRouter();
@@ -17,8 +18,10 @@ export default function App({ Component, pageProps }: AppProps) {
   }
 
   return (
-    <SelectedLayout>
-      <Component {...pageProps} />
-    </SelectedLayout>
+    <LanguageProvider>
+      <SelectedLayout>
+        <Component {...pageProps} />
+      </SelectedLayout>
+    </LanguageProvider>
   );
 }

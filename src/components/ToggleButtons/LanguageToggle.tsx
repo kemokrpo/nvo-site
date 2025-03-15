@@ -1,17 +1,12 @@
-import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
 const LanguageToggle = () => {
-  const [language, setLanguage] = useState("en");
-
-  // Toggle between languages
-  const toggleLanguage = () => {
-    setLanguage(language === "en" ? "bs" : "en");
-  };
+  const { language, toggleLanguage } = useLanguage();
 
   return (
     <button
       onClick={toggleLanguage}
-      className="p-0.5 text-xs rounded-full bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-white"
+      className="p-1 text-xs rounded-full bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-white"
     >
       {language === "en" ? "EN" : "BS"}
     </button>
