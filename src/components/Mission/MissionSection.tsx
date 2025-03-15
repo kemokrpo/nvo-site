@@ -5,7 +5,40 @@ import IconFun from "../Icons/IconFun";
 import IconImprovement from "../Icons/IconImprovement";
 import IconLearning from "../Icons/IconLearning";
 import MissionCircle from "./MissionCircle";
+import { useLanguage } from "@/context/LanguageContext";
 
+type Content = {
+  en: {
+    Fleksibilnost:string;
+    Prijateljstvo:string;
+    Zabava:string;
+    Napredak:string;
+    Pristupačnost:string;
+  };
+  bs: {
+    Fleksibilnost:string;
+    Prijateljstvo:string;
+    Zabava:string;
+    Napredak:string;
+    Pristupačnost:string;
+  };
+};
+const content: Content = {
+  en: {
+    Fleksibilnost:`Flexibility`,
+    Prijateljstvo:`Friendship`,
+    Zabava:`Fun`,
+    Napredak:`Improvement`,
+    Pristupačnost:`Open Mindedness`,
+  },
+  bs: {
+    Fleksibilnost:`Fleksibilnost`,
+    Prijateljstvo:`Prijateljstvo`,
+    Zabava:`Zabava`,
+    Napredak:`Napredak`,
+    Pristupačnost:`Pristupačnost`,
+  }
+};
 const mission = [
   {
     icon: <IconFlexibleStar width={60} />,
@@ -30,6 +63,7 @@ const mission = [
 ];
 
 const MissionSection: FC = () => {
+  const { language }: { language: 'en' | 'bs' } = useLanguage();
   return (
     <section className="bg-main-700 pt-10 pb-10 sm:h-auto h-auto">
       <h2 className="text-3xl sm:text-5xl font-bold text-center text-white dark:text-dt-dark sm:translate-x-[-0rem]">
@@ -37,7 +71,7 @@ const MissionSection: FC = () => {
       </h2>
       <div className="flex flex-col md:flex-row items-center sm:p-[4rem_5rem] p-4 justify-between sm:gap-12 gap-12">
         {mission.map((el, i) => {
-          return <MissionCircle key={i} icon={el.icon} title={el.title} />;
+          return <MissionCircle key={i} icon={el.icon} title={content[language][el.title]} />;
         })}
       </div>
     </section>

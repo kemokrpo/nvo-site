@@ -9,8 +9,8 @@ import { LanguageProvider } from "@/context/LanguageContext";
 export default function App({ Component, pageProps }: AppProps) {
   const { pathname } = useRouter();
 
-  // Determine the layout to use based on the route
-  let SelectedLayout = Layout; // Default Layout
+  // Layout bazirano na djelu str
+  let SelectedLayout = Layout; 
   if (pathname.startsWith("/jobfair")) {
     SelectedLayout = JobFairLayout;
   } else if (pathname.startsWith("/hackathon")) {

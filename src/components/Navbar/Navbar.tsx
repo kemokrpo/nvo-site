@@ -4,8 +4,52 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import IconWindmill from "../Icons/IconWindmill";
+import { useLanguage } from "@/context/LanguageContext";
+import { lang } from "moment";
+
+type Content = {
+  en: {
+    Join: string;
+    Course:string;
+    JobFair: string;
+    Novosti: string;
+    Projekti: string;
+    About:string;
+    Timovi:string;
+  };
+  bs: {
+    Join: string;
+    Course: string;
+    JobFair: string;
+    Novosti: string;
+    Projekti: string;
+    About:string;
+    Timovi:string;
+  };
+};
+const content: Content = {
+  en: {
+    Join: `Join us`,
+    Course: `Spring Course`,
+    JobFair: `JobFair`,
+    Novosti: `News`,
+    Projekti: `Projects`,
+    About: `About Us`,
+    Timovi: 'Teams',
+  },
+  bs: {
+    Join: `Pridruzi nam se`,
+    Course: `Proljetni seminar`,
+    JobFair: `Sajam Poslova`,
+    Novosti: `Novosti`,
+    Projekti: `Projekti`,
+    About: `O nama`,
+    Timovi: `Timovi`,
+  }
+};
 
 const Navbar = () => {
+  const { language }: { language: 'en' | 'bs' } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
   const [projektiOpen, setProjektiOpen] = useState(false);
   const [oNamaOpen, setONamaOpen] = useState(false);
@@ -55,13 +99,13 @@ const Navbar = () => {
           onMouseLeave={() => setONamaOpen(false)}
         >
           <button className="cursor-pointer" onClick={toggleONama}>
-            O nama
+            {content[language].About}
           </button>
           <div
             className={`absolute p-5 bg-main-700 z-30 top-10 translate-x-[-1rem] translate-y-[-1rem] flex flex-col gap-4 rounded-md text-sm w-[11rem] ${oNamaOpen ? 'block' : 'hidden'}`}
           >
             <Link href="/about" className="hover:underline">BEST Mostar</Link>
-            <Link href="/about/teams" className="hover:underline">Timovi</Link>
+            <Link href="/about/teams" className="hover:underline">{content[language].Timovi}</Link>
             <Link href="https://www.best.eu.org/index.jsp" className="hover:underline">BEST International</Link>
           </div>
         </li>
@@ -73,23 +117,23 @@ const Navbar = () => {
           onMouseLeave={() => setProjektiOpen(false)}
         >
           <button className="cursor-pointer" onClick={toggleProjekti}>
-            Projekti
+            {content[language].Projekti}
           </button>
           <div
             className={`absolute p-5 bg-main-700 z-30 top-10 translate-x-[-1rem] translate-y-[-1rem] flex flex-col gap-4 rounded-md text-sm w-[11rem] ${projektiOpen ? 'block' : 'hidden'}`}
           >
-            <Link href="https://course25-best-mostar.org/" className="hover:underline" target="">Proljetni seminar</Link>
+            <Link href="https://course25-best-mostar.org/" className="hover:underline" target="">{content[language].Course}</Link>
             <Link href="/hackathon" className="hover:underline" target="">Hackathon</Link>
-            <Link href="/jobfair" target="">JobFair</Link>
+            <Link href="/jobfair" target="">{content[language].JobFair}</Link>
           </div>
         </li>
 
         <li className="hover:underline">
-          <Link href="/news">Novosti</Link>
+          <Link href="/news">{content[language].Novosti}</Link>
         </li>
 
         <li className="hover:underline">
-          <Link href="/about">Pridruzi nam se</Link>
+          <Link href="/about">{content[language].Join}</Link>
         </li>
       </ul>
 
@@ -104,7 +148,7 @@ const Navbar = () => {
           {oNamaOpen && (
             <div className="absolute p-5 bg-main-700 z-30 top-0 right-0 flex flex-col gap-4 rounded-md text-sm w-[11rem]">
               <Link href="/about" className="hover:underline">BEST Mostar</Link>
-              <Link href="/about/teams" className="hover:underline">Timovi</Link>
+              <Link href="/about/teams" className="hover:underline">{content[language].Timovi}</Link>
               <Link href="https://www.best.eu.org/index.jsp" className="hover:underline">BEST International</Link>
             </div>
           )}
@@ -112,23 +156,23 @@ const Navbar = () => {
 
         <li className="hover:underline relative group">
           <button onClick={toggleProjekti} className="cursor-pointer">
-            Projekti
+            {content[language].Projekti}
           </button>
           {projektiOpen && (
             <div className="absolute p-5 bg-main-700 z-30 translate-y-[-4rem] right-0 flex flex-col gap-4 rounded-md text-sm w-[11rem]">
-              <Link href="https://course25-best-mostar.org/" className="hover:underline" target="_blank">Proljetni seminar</Link>
+              <Link href="https://course25-best-mostar.org/" className="hover:underline" target="_blank">{content[language].Course}</Link>
               <Link href="https://hackathon-bestmostar.org/" className="hover:underline" target="_blank">Hackathon</Link>
-              <Link href="https://jobfairmostar.org/" target="_blank">JobFair</Link>
+              <Link href="https://jobfairmostar.org/" target="_blank">{content[language].JobFair}</Link>
             </div>
           )}
         </li>
 
         <li className="hover:underline">
-          <Link href="/about/news">Novosti</Link>
+          <Link href="/about/news">{content[language].Novosti}</Link>
         </li>
 
         <li className="hover:underline">
-          <Link href="/about">Pridruzi nam se</Link>
+          <Link href="/about">{content[language].Join}</Link>
         </li>
       </ul>
     </section>

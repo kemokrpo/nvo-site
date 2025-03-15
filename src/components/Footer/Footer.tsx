@@ -3,8 +3,32 @@ import { FC } from "react";
 
 import logo from "@/assets/images/logo-best.png";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
+
+
+type Content = {
+  en: {
+    MadeWith: string;
+    By: string;
+  };
+  bs: {
+    MadeWith: string;
+    By: string;
+  };
+};
+const content: Content = {
+  en: {
+    MadeWith: 'Made with',
+    By: `string`,
+  },
+  bs: {
+    MadeWith: `string`,
+    By: `string`,
+  }
+};
 
 const Footer: FC = () => {
+  const { language }: { language: 'en' | 'bs' } = useLanguage();
   return (
     <footer className="bg-gray-900 p-10 lg:p-20 grid gap-10 lg:gap-20 grid-cols-1 lg:grid-cols-5 w-full">
       <div className="flex flex-col items-start">
