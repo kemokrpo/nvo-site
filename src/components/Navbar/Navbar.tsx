@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import IconWindmill from "../Icons/IconWindmill";
 import { useLanguage } from "@/context/LanguageContext";
-import { lang } from "moment";
+
 
 type Content = {
   en: {
@@ -122,7 +122,7 @@ const Navbar = () => {
           <div
             className={`absolute p-5 bg-main-700 z-30 top-10 translate-x-[-1rem] translate-y-[-1rem] flex flex-col gap-4 rounded-md text-sm w-[11rem] ${projektiOpen ? 'block' : 'hidden'}`}
           >
-            <Link href="https://course25-best-mostar.org/" className="hover:underline" target="">{content[language].Course}</Link>
+            <Link href="/course" className="hover:underline" target="">{content[language].Course}</Link>
             <Link href="/hackathon" className="hover:underline" target="">Hackathon</Link>
             <Link href="/jobfair" target="">{content[language].JobFair}</Link>
           </div>
@@ -160,9 +160,9 @@ const Navbar = () => {
           </button>
           {projektiOpen && (
             <div className="absolute p-5 bg-main-700 z-30 translate-y-[-4rem] right-0 flex flex-col gap-4 rounded-md text-sm w-[11rem]">
-              <Link href="https://course25-best-mostar.org/" className="hover:underline" target="_blank">{content[language].Course}</Link>
-              <Link href="https://hackathon-bestmostar.org/" className="hover:underline" target="_blank">Hackathon</Link>
-              <Link href="https://jobfairmostar.org/" target="_blank">{content[language].JobFair}</Link>
+              <Link href="/course" className="hover:underline" target="_blank">{content[language].Course}</Link>
+              <Link href="/hackathon" className="hover:underline" target="_blank">Hackathon</Link>
+              <Link href="/jobfair" target="_blank">{content[language].JobFair}</Link>
             </div>
           )}
         </li>

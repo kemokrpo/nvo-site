@@ -8,8 +8,73 @@ import IconHandshake from "@/components/Icons/IconHandshake";
 import IconFundraising from "@/components/Icons/IconFundraising";
 import IconMegaphone from "@/components/Icons/IconMegaphone";
 import IconDesign from "@/components/Icons/IconDesign";
+import { useLanguage } from "@/context/LanguageContext";
+
+
+type Content = {
+  en: {
+    Teams:string;
+    BestTeams:string;
+    IT:string;
+    HR:string;
+    FR:string;
+    PR:string;
+    DT:string;
+    ITD:string;
+    HRD:string;
+    FRD:string;
+    PRD:string;
+    DTD:string;
+  };
+  bs: {
+    Teams:string;
+    BestTeams:string;
+    IT:string;
+    HR:string;
+    FR:string;
+    PR:string;
+    DT:string;
+    ITD:string;
+    HRD:string;
+    FRD:string;
+    PRD:string;
+    DTD:string;
+
+  };
+};
+const content: Content = {
+  en: {
+    Teams:`Teams`,
+    BestTeams:`Teams in BEST`,
+    IT:`IT Team`,
+    HR:`HR Team`,
+    FR:`FR Team`,
+    PR:`PR Team`,
+    DT:`Design Team`,
+    ITD:`Team responsible for information technologies`,
+    HRD:`Team responsible for human resources`,
+    FRD:`Team responsible for fundraising`,
+    PRD:`Team responsible for public relationships`,
+    DTD:`Team responsible for design`,
+  },
+  bs: {
+    Teams:`Timovi`,
+    BestTeams:`Timovi unutar BEST-a`,
+    IT:`IT Tim`,
+    HR:`HR Tim`,
+    FR:`FR Tim`,
+    PR:`PR Tim`,
+    DT:`Dizajn Tim`,
+    ITD:`Tim zadužen za informacijske tehnologije`,
+    HRD:`Tim zadužen za ljudske resurse`,
+    FRD:`Tim zadužen za odnose sa kompanijama`,
+    PRD:`Tim zadužen za odnos sa javnošću`,
+    DTD:`Tim zadužen za dizajn`,
+  }
+};
 
 const Teams: NextPage = () => {
+  const { language }: { language: 'en' | 'bs' } = useLanguage();
   return (
     <section className="h-min p-[5rem_5rem]">
       <div className="w-full relative h-[20vh] sm:h-[40vh]">
@@ -22,10 +87,10 @@ const Teams: NextPage = () => {
         />
       </div>
       <div className="bg-red-200 w-max mt-5 pl-2 pr-2 pt-1 pb-1 rounded-md">
-        <h5 className="text-sm text-main font-medium">TEAMS</h5>
+        <h5 className="text-sm text-main font-medium">{content[language].Teams}</h5>
       </div>
       <h2 className="mt-1 text-3xl font-bold text-gray-900 dark:text-dt-dark">
-        Timovi unutar BEST-a
+        {content[language].BestTeams}
       </h2>
       <p className="text-gray-700 dark:text-dt-dark mt-3 text-justify">
         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus
@@ -44,28 +109,28 @@ const Teams: NextPage = () => {
       <div className="flex justify-center flex-wrap gap-10 pt-20">
         <TeamCard
           icon={<IconLaptop width={64} />}
-          text="IT Tim"
-          description="Tim zadužen za informacijske tehnologije"
+          text={content[language].IT}
+          description={content[language].ITD}
         />
         <TeamCard
           icon={<IconHandshake width={64} />}
-          text="HR Tim"
-          description="Tim zadužen za ljudske resurse"
+          text={content[language].HR}
+          description={content[language].HRD}
         />
         <TeamCard
           icon={<IconFundraising width={64} />}
-          text="FR Tim"
-          description="Tim zadužen za odnose sa kompanijama"
+          text={content[language].FR}
+          description={content[language].FRD}
         />
         <TeamCard
           icon={<IconMegaphone width={64} />}
-          text="PR Tim"
-          description="Tim zadužen za odnos sa javnošću"
+          text={content[language].PR}
+          description={content[language].PRD}
         />
         <TeamCard
           icon={<IconDesign width={64} />}
-          text="Dizajn Tim"
-          description="Tim zadužen za dizajn"
+          text={content[language].DT}
+          description={content[language].DTD}
         />
       </div>
     </section>
