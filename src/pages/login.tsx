@@ -39,7 +39,7 @@ const Login = () => {
   };
 
   return (
-    <div className="h-[517px]">
+    <div className="h-[550px]">
 
       <div className="max-w-md mx-auto mt-16 mb-16 p-6 bg-main-700 shadow-md rounded-lg translate-y-[1.0rem]">
         <h1 className="text-2xl font-bold mb-4">Login</h1>
