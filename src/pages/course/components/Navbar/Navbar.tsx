@@ -118,7 +118,7 @@ const Navbar = () => {
   };
 
   return (
-    <section className="p-2 pl-5 pr-5 flex justify-between items-center bg-purple-900 shadow-md fixed w-full z-30 top-[2.1rem] left-0">
+    <section className="p-2 pl-5 pr-5 flex justify-between items-center bg-green-800 shadow-md fixed w-full z-30 top-[2.1rem] left-0">
       <Link href="/" className="flex items-center gap-1 mt-[-2.1rem]">
         <span className="fill-white dark:fill-dbg-light">
           <IconWindmill width={70} />

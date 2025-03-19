@@ -74,7 +74,9 @@ const Register = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-16 mb-16 p-6 bg-main-700 shadow-md rounded-lg translate-y-[1.5rem]">
+  <div className="h-[517px]">
+
+    <div className="max-w-md mx-auto mt-16 mb-16 p-6 bg-main-700 shadow-md rounded-lg translate-y-[1.0rem]">
       <h1 className="text-2xl font-bold mb-4 text-dt-dark dark:text-dt-light">Register</h1>
       {error && <p className="text-red-500">{error}</p>}
       {success && <p className="text-green-500">{success}</p>}
@@ -94,7 +96,7 @@ const Register = () => {
           value={formData.lastName}
           onChange={handleChange}
           className="w-full p-2 border rounded dark:bg-dbg-dark dark:text-dt-dark"
-        />
+          />
         <input
           type="text"
           name="username"
@@ -126,7 +128,7 @@ const Register = () => {
           value={formData.confirmPassword}
           onChange={handleChange}
           className="w-full p-2 border rounded dark:bg-dbg-dark dark:text-dt-dark"
-        />
+          />
         <button
           type="submit"
           className="w-full p-2 rounded bg-dbg-light text-dt-light dark:bg-dbg-dark dark:text-dt-dark rounded hover:bg-gray-500 dark:hover:bg-gray-500"
@@ -135,6 +137,7 @@ const Register = () => {
         </button>
       </form>
     </div>
+   </div>
   );
 };
 
