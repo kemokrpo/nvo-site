@@ -1,5 +1,5 @@
-import ThemeToggle from "@/components/ToggleButtons/ThemeToggle"; // Your theme toggle button component
-import LanguageToggle from "@/components/ToggleButtons/LanguageToggle"; // Your language toggle component
+import ThemeToggle from "@/components/ToggleButtons/ThemeToggle"; 
+import LanguageToggle from "@/components/ToggleButtons/LanguageToggle"; 
 
 const Header = () => {
     return (

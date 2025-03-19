@@ -5,17 +5,22 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import IconWindmill from "../Icons/IconWindmill";
 import { useLanguage } from "@/context/LanguageContext";
-
+import axios from "axios";
 
 type Content = {
   en: {
     Join: string;
-    Course:string;
+    Course: string;
     JobFair: string;
     Novosti: string;
     Projekti: string;
-    About:string;
-    Timovi:string;
+    About: string;
+    Timovi: string;
+    Profile: string;
+    Me: string;
+    LogOut: string;
+    LogIn: string;
+    Register: string;
   };
   bs: {
     Join: string;
@@ -23,10 +28,16 @@ type Content = {
     JobFair: string;
     Novosti: string;
     Projekti: string;
-    About:string;
-    Timovi:string;
+    About: string;
+    Timovi: string;
+    Profile: string;
+    Me: string;
+    LogOut: string;
+    LogIn: string;
+    Register: string;
   };
 };
+
 const content: Content = {
   en: {
     Join: `Join us`,
@@ -35,7 +46,12 @@ const content: Content = {
     Novosti: `News`,
     Projekti: `Projects`,
     About: `About Us`,
-    Timovi: 'Teams',
+    Timovi: `Teams`,
+    Profile: `Profile`,
+    Me: `Me`,
+    LogOut: 'Log Out',
+    LogIn: `Log In`,
+    Register: `Register`,
   },
   bs: {
     Join: `Pridruzi nam se`,
@@ -45,6 +61,11 @@ const content: Content = {
     Projekti: `Projekti`,
     About: `O nama`,
     Timovi: `Timovi`,
+    Profile: `Profil`,
+    Me: `Ja`,
+    LogOut: `Odjavi se`,
+    LogIn: `Prijavi se`,
+    Register: `Registruj se`,
   }
 };
 
@@ -53,25 +74,47 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [projektiOpen, setProjektiOpen] = useState(false);
   const [oNamaOpen, setONamaOpen] = useState(false);
+  const [joinOpen, setJoinOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
 
   const router = useRouter();
 
   useEffect(() => {
+    // Check for a valid authentication token or user session
+    const token = localStorage.getItem("authToken"); // or check with your session logic
+    setIsLoggedIn(!!token); // Set to true if there's a token, otherwise false
+
     setProjektiOpen(false);
     setONamaOpen(false);
     setMenuOpen(false);
+    setJoinOpen(false);
   }, [router.asPath]);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const toggleProjekti = () => {
-    setProjektiOpen(!projektiOpen);
-    if (oNamaOpen) setONamaOpen(false);
+    setProjektiOpen((prev) => !prev);
+    setONamaOpen(false); // Close O Nama
+    setJoinOpen(false); // Close Join
   };
 
   const toggleONama = () => {
-    setONamaOpen(!oNamaOpen);
-    if (projektiOpen) setProjektiOpen(false);
+    setONamaOpen((prev) => !prev);
+    setProjektiOpen(false); // Close Projekti
+    setJoinOpen(false); // Close Join
+  };
+
+  const toggleJoin = () => {
+    setJoinOpen((prev) => !prev);
+    setProjektiOpen(false); // Close Projekti
+    setONamaOpen(false); // Close O Nama
+  };
+
+  const handleLogout = () => {
+    // Clear authentication token (or session) on logout
+    localStorage.removeItem("authToken");
+    setIsLoggedIn(false); // Set login state to false
+    router.push("/login"); // Redirect to login page
   };
 
   return (
@@ -128,19 +171,41 @@ const Navbar = () => {
           </div>
         </li>
 
-        <li className="hover:underline">
-          <Link href="/news">{content[language].Novosti}</Link>
+        {/* Join/ Profile Dropdown */}
+        <li className="hover:underline relative group" onMouseEnter={() => setJoinOpen(true)} onMouseLeave={() => setJoinOpen(false)}>
+          <button className="cursor-pointer" onClick={toggleJoin}>
+            {isLoggedIn ? content[language].Profile : content[language].Join}
+          </button>
+          <div
+            className={`absolute p-5 bg-main-700 z-30 top-10 translate-x-[-1rem] translate-y-[-1rem] flex flex-col gap-4 rounded-md text-sm w-[11rem] ${joinOpen ? 'block' : 'hidden'}`}
+          >
+            {isLoggedIn ? (
+              <>
+                <Link href="/profile" className="hover:underline">{content[language].Me}</Link>
+                <button onClick={handleLogout} className="hover:underline">{content[language].LogOut}</button>
+                <Link href="/" className="hover:underline">Become BESTie</Link> 
+              </>
+            ) : (
+              <>
+                <Link href="/register" className="hover:underline">Register</Link>
+                <Link href="/login" className="hover:underline">Login</Link>
+                <Link href="/" className="hover:underline">Become BESTie</Link> 
+              </>
+            )}
+            
+          </div>
         </li>
 
         <li className="hover:underline">
-          <Link href="/about">{content[language].Join}</Link>
+          <Link href="/news">{content[language].Novosti}</Link>
         </li>
       </ul>
 
       {/* Mobile Navigation */}
       <ul
-        className={`md:hidden flex flex-col space-y-4 text-white tracking-wide ${menuOpen ? "absolute top-16 right-0 bg-main-700 p-5 w-full" : "hidden"}`}
+        className={`md:hidden flex flex-col space-y-4 text-white tracking-wide ${menuOpen ? "absolute top-16 right-0 bg-main-700 p-5 w-full translate-y-[-1rem]" : "hidden"}`}
       >
+        {/* Mobile O nama Dropdown */}
         <li className="hover:underline relative group">
           <button onClick={toggleONama} className="cursor-pointer">
             O nama
@@ -154,6 +219,7 @@ const Navbar = () => {
           )}
         </li>
 
+        {/* Mobile Projekti Dropdown */}
         <li className="hover:underline relative group">
           <button onClick={toggleProjekti} className="cursor-pointer">
             {content[language].Projekti}
@@ -167,17 +233,32 @@ const Navbar = () => {
           )}
         </li>
 
-        <li className="hover:underline">
-          <Link href="/about/news">{content[language].Novosti}</Link>
-        </li>
-
-        <li className="hover:underline">
-          <Link href="/about">{content[language].Join}</Link>
+        {/* Mobile Join/Profile Dropdown */}
+        <li className="hover:underline relative group">
+          <button onClick={toggleJoin} className="cursor-pointer">
+            {isLoggedIn ? content[language].Profile : content[language].Join}
+          </button>
+          {joinOpen && (
+            <div className="absolute p-5 bg-main-700 z-30 top-0 right-0 flex flex-col gap-4 rounded-md text-sm w-[11rem]">
+              {isLoggedIn ? (
+                <>
+                  <Link href="/profile" className="hover:underline">{content[language].Me}</Link>
+                  <button onClick={handleLogout} className="hover:underline">{content[language].LogOut}</button>
+                  <Link href="/" className="hover:underline">Become BESTie</Link> 
+                </>
+              ) : (
+                <>
+                  <Link href="/register" className="hover:underline">Register</Link>
+                  <Link href="/login" className="hover:underline">Login</Link>
+                  <Link href="/" className="hover:underline">Become BESTie</Link> 
+                </>
+              )}
+            </div>
+          )}
         </li>
       </ul>
     </section>
   );
 };
-
 
 export default Navbar;
