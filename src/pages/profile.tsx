@@ -1,7 +1,8 @@
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Image from "next/image"; // Updated to use Image
-import axios from "axios"; // Import axios
+import Image from "next/image";
+import axios from "axios";
 
 type UserProfile = {
   username: string;
@@ -9,7 +10,7 @@ type UserProfile = {
   role: { id: number; name: string };
   firstName: string;
   lastName: string;
-  profilePicture: {url: string} | null;
+  profilePicture: { url: string } | null;
   phoneNumber: string;
   dateOfBirth: string;
   bio: string;
@@ -30,18 +31,23 @@ const ProfilePage = () => {
     bio: "",
   });
   const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
+  const [isClient, setIsClient] = useState(false); // Track if we are in the client-side
+
   const router = useRouter();
 
   useEffect(() => {
+    // Set isClient to true after the component mounts to indicate we're on the client side
+    setIsClient(true);
+
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
 
       if (!token) return;
 
       try {
-        // Use axios to fetch user data
+        // Use axios to fetch user data and populate both role and profilePicture
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/users/me?populate=role`,
+          `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/users/me?populate[role]=true&populate[profilePicture]=true`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -51,20 +57,24 @@ const ProfilePage = () => {
 
         const userData = response.data;
 
-        console.log("Fetched user data:", userData);
-
         setUserData(userData);
         setFormData({
           ...userData,
           profilePicture: userData.profilePicture || null,
         });
+        console.log("User data: ", userData);
+        console.log("Profile Picture: ", userData.profilePicture.url)
+        const fullImageUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL}${userData.profilePicture?.url}`;
+        console.log({ fullImageUrl });
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
 
-    fetchProfile();
-  }, []);
+    if (isClient) {
+      fetchProfile(); // Fetch profile only on client-side
+    }
+  }, [isClient]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -85,9 +95,9 @@ const ProfilePage = () => {
     if (profilePictureFile) {
       const formData = new FormData();
       formData.append("files", profilePictureFile);
-      formData.append("ref", "plugin::users-permissions.user"); // Refers to the user entity in Strapi
-      formData.append("refId", String(userData?.id)); // The user's ID
-      formData.append("field", "profilePicture"); // Field name in schema.json
+      formData.append("ref", "plugin::users-permissions.user");
+      formData.append("refId", String(userData?.id));
+      formData.append("field", "profilePicture");
 
       try {
         const uploadRes = await axios.post(
@@ -104,7 +114,7 @@ const ProfilePage = () => {
         if (uploadData.length > 0) {
           setFormData((prev) => ({
             ...prev,
-            profilePicture: uploadData[0], // Update profilePicture field with uploaded media data
+            profilePicture: uploadData[0],
           }));
         }
       } catch (error) {
@@ -117,7 +127,7 @@ const ProfilePage = () => {
         `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/users/me`,
         {
           ...formData,
-          profilePicture: formData.profilePicture?.id, // Link uploaded media
+          profilePicture: formData.profilePicture?.id,
         },
         {
           headers: {
@@ -151,13 +161,14 @@ const ProfilePage = () => {
           <Image
             src={
               userData.profilePicture?.url
-                ? `${process.env.NEXT_PUBLIC_STRAPI_URL_API}${userData.profilePicture.url}`
+                ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${userData.profilePicture.url}`
                 : "/default-profile.png"
             }
             alt="Profile Picture"
             width={64}
             height={64}
             className="w-16 h-16 rounded-full border border-gray-900 dark:border-gray-600"
+            unoptimized
           />
           <div>
             <p className="text-xl font-semibold dark:text-dt-dark">
