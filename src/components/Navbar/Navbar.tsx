@@ -81,7 +81,9 @@ const Navbar = () => {
 
   useEffect(() => {
     // Check for a valid authentication token or user session
-    const token = localStorage.getItem("authToken"); // or check with your session logic
+    const token = localStorage.getItem("token"); // or check with your session logic
+    
+    
     setIsLoggedIn(!!token); // Set to true if there's a token, otherwise false
 
     setProjektiOpen(false);
@@ -112,7 +114,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     // Clear authentication token (or session) on logout
-    localStorage.removeItem("authToken");
+    localStorage.removeItem("token");
     setIsLoggedIn(false); // Set login state to false
     router.push("/login"); // Redirect to login page
   };
@@ -182,7 +184,7 @@ const Navbar = () => {
             {isLoggedIn ? (
               <>
                 <Link href="/profile" className="hover:underline">{content[language].Me}</Link>
-                <button onClick={handleLogout} className="hover:underline">{content[language].LogOut}</button>
+                <h1 onClick={handleLogout} className="hover:underline cursor-pointer">{content[language].LogOut}</h1>
                 <Link href="/" className="hover:underline">Become BESTie</Link> 
               </>
             ) : (
@@ -243,7 +245,7 @@ const Navbar = () => {
               {isLoggedIn ? (
                 <>
                   <Link href="/profile" className="hover:underline">{content[language].Me}</Link>
-                  <button onClick={handleLogout} className="hover:underline">{content[language].LogOut}</button>
+                  <h1 onClick={handleLogout} className="hover:underline">{content[language].LogOut}</h1>
                   <Link href="/" className="hover:underline">Become BESTie</Link> 
                 </>
               ) : (

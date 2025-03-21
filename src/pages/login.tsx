@@ -1,4 +1,3 @@
-// pages/login.tsx
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -27,10 +26,20 @@ const Login = () => {
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_STRAPI_URL}/auth/local`,
-        formData
+        {
+          identifier: formData.email, // Use identifier for Strapi
+          password: formData.password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
+
       const { jwt } = response.data;
 
+      // Save the JWT token and redirect
       localStorage.setItem("token", jwt);
       router.push("/profile"); // Redirect to profile page on successful login
     } catch (err: any) {
@@ -40,7 +49,6 @@ const Login = () => {
 
   return (
     <div className="h-[550px]">
-
       <div className="max-w-md mx-auto mt-16 mb-16 p-6 bg-main-700 shadow-md rounded-lg translate-y-[2.0rem]">
         <h1 className="text-2xl font-bold mb-4">Login</h1>
         {error && <p className="text-red-500">{error}</p>}
@@ -70,7 +78,6 @@ const Login = () => {
         </form>
       </div>
     </div>
-   
   );
 };
 
