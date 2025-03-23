@@ -59,8 +59,8 @@ const CreatePost = () => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setPostData((prev) => ({ ...prev, images: Array.from(e.target.files) })); // Correctly typed
+    if (e.target.files && e.target.files.length > 0) {
+      setPostData((prev) => ({ ...prev, images: Array.from(e.target.files!) }));
     }
   };
 
