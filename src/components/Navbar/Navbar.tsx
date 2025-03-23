@@ -201,6 +201,9 @@ const Navbar = () => {
         <li className="hover:underline">
           <Link href="/news">{content[language].Novosti}</Link>
         </li>
+        <li className="hover:underline">
+          <Link href="/blog">Blog</Link>
+        </li>
       </ul>
 
       {/* Mobile Navigation */}

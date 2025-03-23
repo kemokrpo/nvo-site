@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -31,12 +30,11 @@ const ProfilePage = () => {
     bio: "",
   });
   const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
-  const [isClient, setIsClient] = useState(false); // Track if we are in the client-side
+  const [isClient, setIsClient] = useState(false);
 
   const router = useRouter();
 
   useEffect(() => {
-    // Set isClient to true after the component mounts to indicate we're on the client side
     setIsClient(true);
 
     const fetchProfile = async () => {
@@ -45,7 +43,6 @@ const ProfilePage = () => {
       if (!token) return;
 
       try {
-        // Use axios to fetch user data and populate both role and profilePicture
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/users/me?populate[role]=true&populate[profilePicture]=true`,
           {
@@ -62,17 +59,13 @@ const ProfilePage = () => {
           ...userData,
           profilePicture: userData.profilePicture || null,
         });
-        console.log("User data: ", userData);
-        console.log("Profile Picture: ", userData.profilePicture.url)
-        const fullImageUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL}${userData.profilePicture?.url}`;
-        console.log({ fullImageUrl });
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
 
     if (isClient) {
-      fetchProfile(); // Fetch profile only on client-side
+      fetchProfile();
     }
   }, [isClient]);
 

@@ -25,7 +25,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_STRAPI_URL}/auth/local`,
+        `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/auth/local`,
         {
           identifier: formData.email, // Use identifier for Strapi
           password: formData.password,

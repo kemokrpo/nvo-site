@@ -40,8 +40,10 @@ const Register = () => {
     }
 
     try {
+      console.log(process.env.NEXT_PUBLIC_STRAPI_URL_API);
+
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_STRAPI_URL}/auth/local/register`,
+        `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/auth/local/register`,
         {
           username: formData.username,
           email: formData.email,
@@ -58,7 +60,7 @@ const Register = () => {
 
       // Now, update the user's firstName, lastName, and role
       await axios.put(
-        `${process.env.NEXT_PUBLIC_STRAPI_URL}/users/${userId}`,
+        `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/users/${userId}`,
         {
           firstName: formData.firstName,
           lastName: formData.lastName,
