@@ -4,13 +4,13 @@ import Image from "next/image";
 import axios from "axios";
 
 type UserProfile = {
-  id: number; // Add this line
+  id: number;
   username: string;
   email: string;
   role: { id: number; name: string };
   firstName: string;
   lastName: string;
-  profilePicture: { url: string } | null;
+  profilePicture: { id: number; url: string } | null; // Updated to include id
   phoneNumber: string;
   dateOfBirth: string;
   bio: string;
@@ -20,7 +20,7 @@ const ProfilePage = () => {
   const [userData, setUserData] = useState<UserProfile | null>(null);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState<UserProfile>({
-    id: 0, // Add this line
+    id: 0,
     username: "",
     email: "",
     role: { id: 0, name: "" },
@@ -122,7 +122,7 @@ const ProfilePage = () => {
         `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/users/me`,
         {
           ...formData,
-          profilePicture: formData.profilePicture?.id,
+          profilePicture: formData.profilePicture?.id, // Now this is valid
         },
         {
           headers: {
