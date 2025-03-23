@@ -4,6 +4,7 @@ import Image from "next/image";
 import axios from "axios";
 
 type UserProfile = {
+  id: number; // Add this line
   username: string;
   email: string;
   role: { id: number; name: string };
@@ -19,6 +20,7 @@ const ProfilePage = () => {
   const [userData, setUserData] = useState<UserProfile | null>(null);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState<UserProfile>({
+    id: 0, // Add this line
     username: "",
     email: "",
     role: { id: 0, name: "" },
