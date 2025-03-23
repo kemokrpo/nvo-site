@@ -3,12 +3,20 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";  // For generating unique IDs
 
+// Define the type for postData
+type PostData = {
+  title: string;
+  post: string;
+  images: File[]; // Explicitly define images as File[]
+  URLid: string;
+};
+
 const CreatePost = () => {
-  const [postData, setPostData] = useState({
+  const [postData, setPostData] = useState<PostData>({
     title: "",
     post: "",
-    images: [], // to store images
-    URLid: "", // to store the generated URLid
+    images: [], // Initialize as an empty array of File objects
+    URLid: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -52,7 +60,7 @@ const CreatePost = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setPostData((prev) => ({ ...prev, images: Array.from(e.target.files) }));
+      setPostData((prev) => ({ ...prev, images: Array.from(e.target.files) })); // Correctly typed
     }
   };
 

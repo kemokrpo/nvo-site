@@ -18,6 +18,7 @@ type Post = {
   id: number;
   Title: string;
   createdAt: string;
+  URLid: string; // Ensure URLid is included in the Post type
 };
 
 const BlogPage = () => {
@@ -73,6 +74,11 @@ const BlogPage = () => {
     }
   }, [isClient]);
 
+  // Function to handle post click
+  const handlePostClick = (URLid: string) => {
+    router.push(`/blog/post/${URLid}`);
+  };
+
   if (loading) return <p>Loading...</p>; // Show loading state
 
   if (!userData) return <p>Loading user data...</p>;
@@ -99,7 +105,11 @@ const BlogPage = () => {
         <div className="mt-6">
           {posts.length > 0 ? (
             posts.map((post) => (
-              <div key={post.id} className="mb-4">
+              <div
+                key={post.id}
+                onClick={() => handlePostClick(post.URLid)} // Navigate to the post's URL
+                className="mb-4 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
                 <h2 className="text-xl font-semibold text-dt-light dark:text-dt-dark">{post.Title}</h2>
                 <p className="text-sm text-dt-light dark:text-dt-dark">
                   Posted on {new Date(post.createdAt).toLocaleDateString()}
