@@ -77,46 +77,61 @@ const CreatePost = () => {
     setIsLoading(true);
   
     try {
-      // Generate a unique URLid using uuid
-      const URLid = uuidv4();  // UUID will ensure uniqueness across posts
+      // Step 1: Upload images (if any)
+      let imageIds: number[] = [];
+      if (postData.images.length > 0) {
+        const uploadFormData = new FormData();
+        postData.images.forEach((image) => {
+          uploadFormData.append("files", image); // Use "files" for Strapi's upload endpoint
+        });
   
-      const formData = new FormData();
-      formData.append("data[Title]", postData.title);
-  
-      // Ensure the post content has the correct structure (inline Text nodes only)
-      const postContent = JSON.stringify([
-        {
-          type: "paragraph",  // Block type (could be 'paragraph', 'heading', etc.)
-          children: [
-            {
-              type: "text",  // Inline node type should be 'text' for plain text
-              text: postData.post,  // Your actual post content
+        const uploadResponse = await axios.post(
+          `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/upload`,
+          uploadFormData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
             },
-          ],
-        },
-      ]);
+          }
+        );
   
-      formData.append("data[Post]", postContent);
-      formData.append("data[URLid]", URLid);
-      formData.append("data[Author]", userId || ""); // Attach the userId (current user)
+        // Extract image IDs from the upload response
+        imageIds = uploadResponse.data.map((image: any) => image.id);
+      }
   
-      // Append images if there are any
-      postData.images.forEach((image, index) => {
-        formData.append(`files.Images`, image);
-      });
+      // Step 2: Create the post with the image IDs
+      const URLid = uuidv4(); // Generate a unique URLid
   
-      const response = await axios.post(
+      const postResponse = await axios.post(
         `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/posts`,
-        formData,
+        {
+          data: {
+            Title: postData.title,
+            Post: JSON.stringify([
+              {
+                type: "paragraph",
+                children: [
+                  {
+                    type: "text",
+                    text: postData.post,
+                  },
+                ],
+              },
+            ]),
+            URLid,
+            Author: userId || "", // Attach the userId (current user)
+            Images: imageIds, // Associate uploaded image IDs with the post
+          },
+        },
         {
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
         }
       );
   
-      if (response.status === 200 || response.status === 201) {
+      if (postResponse.status === 200 || postResponse.status === 201) {
         setSuccess("Post created successfully!");
         router.push("/blog"); // Redirect after successful creation
       }
@@ -127,7 +142,6 @@ const CreatePost = () => {
       setIsLoading(false);
     }
   };
-  
   
 
   return (
