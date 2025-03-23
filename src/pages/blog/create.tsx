@@ -79,12 +79,16 @@ const CreatePost = () => {
     try {
       // Step 1: Upload images (if any)
       let imageIds: number[] = [];
+      if (postData.images.length > 5) {
+        setError("You can upload a maximum of 5 images.");
+        return;
+      }
       if (postData.images.length > 0) {
         const uploadFormData = new FormData();
         postData.images.forEach((image) => {
           uploadFormData.append("files", image); // Use "files" for Strapi's upload endpoint
         });
-  
+      
         const uploadResponse = await axios.post(
           `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/upload`,
           uploadFormData,
@@ -145,15 +149,12 @@ const CreatePost = () => {
   
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-xl font-bold mb-4">Create a New Post</h1>
-
-      {error && <p className="text-red-500">{error}</p>}
-      {success && <p className="text-green-500">{success}</p>}
-
+    <div className="container mx-auto p-4 h-[65vh] translate-y-[4rem]">
+      <h1 className="text-xl font-bold mb-6 dark:text-dt-dark">Create a New Post</h1> {/* Reduced margin-bottom */}
+  
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-dt-dark">
             Title
           </label>
           <input
@@ -165,9 +166,9 @@ const CreatePost = () => {
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </div>
-
+  
         <div>
-          <label htmlFor="post" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="post" className="block text-sm font-medium text-gray-700 dark:text-dt-dark">
             Post Content
           </label>
           <textarea
@@ -175,14 +176,14 @@ const CreatePost = () => {
             id="post"
             value={postData.post}
             onChange={handleInputChange}
-            rows={5}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            rows={10}
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm resize-none"
           />
         </div>
-
+  
         <div>
-          <label htmlFor="images" className="block text-sm font-medium text-gray-700">
-            Upload Images (optional)
+          <label htmlFor="images" className="block text-sm font-medium text-gray-700 dark:text-dt-dark">
+            Upload Images (optional, max 5)
           </label>
           <input
             type="file"
@@ -190,10 +191,10 @@ const CreatePost = () => {
             id="images"
             onChange={handleFileChange}
             multiple
-            className="mt-1 block w-full text-sm"
+            className="mt-1 block w-full text-sm dark:text-dt-dark"
           />
         </div>
-
+  
         <button
           type="submit"
           disabled={isLoading}
@@ -202,6 +203,9 @@ const CreatePost = () => {
           {isLoading ? "Creating..." : "Create Post"}
         </button>
       </form>
+  
+      {error && <p className="text-red-500">{error}</p>}
+      {success && <p className="text-green-500">{success}</p>}
     </div>
   );
 };
