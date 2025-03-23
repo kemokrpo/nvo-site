@@ -10,7 +10,7 @@ type UserProfile = {
   role: { id: number; name: string };
   firstName: string;
   lastName: string;
-  profilePicture: { id: number; url: string } | null; // Updated to include id
+  profilePicture: { id: number; url: string } | null;
   phoneNumber: string;
   dateOfBirth: string;
   bio: string;
@@ -122,7 +122,7 @@ const ProfilePage = () => {
         `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/users/me`,
         {
           ...formData,
-          profilePicture: formData.profilePicture?.id, // Now this is valid
+          profilePicture: formData.profilePicture?.id,
         },
         {
           headers: {
@@ -187,7 +187,7 @@ const ProfilePage = () => {
             <input
               type={field === "dateOfBirth" ? "date" : "text"}
               name={field}
-              value={formData[field as keyof UserProfile]}
+              value={String(formData[field as keyof UserProfile] || "")} // Convert to string
               onChange={handleChange}
               className="input border border-gray-500 dark:border-gray-600"
               onFocus={() => setEditing(true)}
