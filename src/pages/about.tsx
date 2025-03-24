@@ -104,7 +104,7 @@ const AboutPage = ({ aboutUs }: any) => {
   );
 };
 
-// This will replace the API request with mock data for testing
+// This will replace the API request with mock data for testing soon to remove
 export async function getStaticProps() {
   return {
     props: {
