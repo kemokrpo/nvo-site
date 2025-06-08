@@ -1,126 +1,133 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
-
-type UserProfile = {
-  username: string;
-  email: string;
-  role: { id: number; name: string };
-  firstName: string;
-  lastName: string;
-  profilePicture: { url: string } | null;
-  phoneNumber: string;
-  dateOfBirth: string;
-  bio: string;
-};
-
-type Post = {
-  id: number;
-  Title: string;
-  createdAt: string;
-  URLid: string; // Ensure URLid is included in the Post type
-};
+import PocketBase from "pocketbase";
 
 const BlogPage = () => {
-  const [userData, setUserData] = useState<UserProfile | null>(null);
-  const [canCreatePost, setCanCreatePost] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-  const [posts, setPosts] = useState<Post[]>([]); // State for posts
-  const [loading, setLoading] = useState(true); // Loading state
+  const [posts, setPosts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const router = useRouter();
 
+  const POSTS_PER_PAGE = 3; // For testing purposes
+
   useEffect(() => {
-    setIsClient(true);
-
-    // Fetch user role and posts
-    const fetchUserRoleAndPosts = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
+    const fetchPosts = async () => {
       try {
-        // Fetch user data with populated role
-        const userResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/users/me?populate[role]=true`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const userData = userResponse.data;
-        setUserData(userData);
-
-        // Set permissions based on role
-        if (userData.role.id === 1 || userData.role.id === 3 || userData.role.id === 4 || userData.role.id === 5) {
-          setCanCreatePost(true);
-        }
-
-        // Fetch posts
-        const postsResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/posts`
-        );
-        setPosts(postsResponse.data.data); // Store fetched posts in state
-
+        const pb = new PocketBase(process.env.NEXT_PUBLIC_PB_URL);
+        const response = await pb.collection("blogs").getList(currentPage, POSTS_PER_PAGE);
+        setPosts(response.items);
+        setTotalPages(response.totalPages);
       } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false); // Set loading to false once data is fetched
+        console.error("Error fetching posts:", error);
       }
     };
 
-    if (isClient) {
-      fetchUserRoleAndPosts();
-    }
-  }, [isClient]);
+    fetchPosts();
+  }, [currentPage]);
 
-  // Function to handle post click
-  const handlePostClick = (URLid: string) => {
-    router.push(`/blog/post/${URLid}`);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
-  if (loading) return <p>Loading...</p>; // Show loading state
-
-  if (!userData) return <p>Loading user data...</p>;
-
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4 dark:text-dt-dark">Blog</h1>
-      <div>
-        <p className="text-lg dark:text-dt-dark">
-          Welcome {userData.firstName} {userData.lastName}!
-        </p>
+    <div className="min-h-screen flex flex-col justify-between max-w-6xl mx-auto p-6">
+      {/* Header Section */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Blog Posts</h1>
+        <button
+          onClick={() => router.push("/blog/create")}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 shadow-md bg-main-700"
+        >
+          Create Post
+        </button>
+      </div>
 
-        {/* Show create button if the user has the right role */}
-        {canCreatePost && (
-          <button
-            onClick={() => router.push("/blog/create")}
-            className="btn mt-4 bg-blue-500 text-white p-2 rounded"
+      {/* Posts Section */}
+      <div className="flex-grow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {posts.map((post) => (
+          <div
+            key={post.id}
+            className="p-4 border rounded shadow hover:shadow-lg transition-shadow cursor-pointer"
+            onClick={() => router.push(`/blog/${post.id}`)}
           >
-            Create Blog Post
-          </button>
+            <h2 className="text-xl font-semibold">{post.title}</h2>
+            <p className="text-gray-600 text-sm">{post.created.slice(0, 10)}</p>
+            <p className="mt-2 text-gray-800 line-clamp-3">{post.content}</p>
+          </div>
+        ))}
+        {posts.length === 0 && (
+          <p className="text-center col-span-full text-gray-500">
+            No blog posts available. Be the first to{" "}
+            <span
+              className="text-blue-600 underline cursor-pointer"
+              onClick={() => router.push("/blog/create")}
+            >
+              create a post
+            </span>
+            !
+          </p>
         )}
+      </div>
 
-        {/* Display list of posts */}
-        <div className="mt-6">
-          {posts.length > 0 ? (
-            posts.map((post) => (
-              <div
-                key={post.id}
-                onClick={() => handlePostClick(post.URLid)} // Navigate to the post's URL
-                className="mb-4 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-              >
-                <h2 className="text-xl font-semibold text-dt-light dark:text-dt-dark">{post.Title}</h2>
-                <p className="text-sm text-dt-light dark:text-dt-dark">
-                  Posted on {new Date(post.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-            ))
-          ) : (
-            <p>No posts available.</p>
+      {/* Pagination Section */}
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-6 space-x-2">
+          {/* First Page Button */}
+          {currentPage > 1 && (
+            <button
+              onClick={() => handlePageChange(1)}
+              className="px-3 py-1 rounded bg-gray-200 text-black hover:bg-gray-300"
+            >
+              First Page
+            </button>
+          )}
+
+          {/* Previous Page Button */}
+          {currentPage > 1 && (
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="px-3 py-1 rounded bg-gray-200 text-black hover:bg-gray-300"
+            >
+              Previous Page
+            </button>
+          )}
+
+          {/* Page Number Buttons */}
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-3 py-1 rounded ${
+                currentPage === index + 1
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-black hover:bg-gray-300"
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+
+          {/* Next Page Button */}
+          {currentPage < totalPages && (
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="px-3 py-1 rounded bg-gray-200 text-black hover:bg-gray-300"
+            >
+              Next Page
+            </button>
+          )}
+
+          {/* Last Page Button */}
+          {currentPage < totalPages && (
+            <button
+              onClick={() => handlePageChange(totalPages)}
+              className="px-3 py-1 rounded bg-gray-200 text-black hover:bg-gray-300"
+            >
+              Last Page
+            </button>
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 };

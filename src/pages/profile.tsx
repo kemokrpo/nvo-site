@@ -1,222 +1,196 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import axios from "axios";
+import PocketBase from "pocketbase";
+import { useAuth } from "@/context/AuthContext";
 
-type UserProfile = {
-  id: number;
-  username: string;
-  email: string;
-  role: { id: number; name: string };
-  firstName: string;
-  lastName: string;
-  profilePicture: { id: number; url: string } | null;
-  phoneNumber: string;
-  dateOfBirth: string;
-  bio: string;
-};
+import IntlTelInput from "react-intl-tel-input";
+import "react-intl-tel-input/dist/main.css";
 
 const ProfilePage = () => {
-  const [userData, setUserData] = useState<UserProfile | null>(null);
+  const [userData, setUserData] = useState(null);
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState<UserProfile>({
-    id: 0,
-    username: "",
-    email: "",
-    role: { id: 0, name: "" },
-    firstName: "",
-    lastName: "",
-    profilePicture: null,
-    phoneNumber: "",
-    dateOfBirth: "",
-    bio: "",
-  });
-  const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
-  const [isClient, setIsClient] = useState(false);
-
+  const [formData, setFormData] = useState({});
+  const [avatarFile, setAvatarFile] = useState(null);
   const router = useRouter();
+  const { isLoggedIn } = useAuth();
 
   useEffect(() => {
-    setIsClient(true);
+    if (!isLoggedIn) {
+      router.push("/");
+      return;
+    }
 
     const fetchProfile = async () => {
-      const token = localStorage.getItem("token");
-
-      if (!token) return;
-
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/users/me?populate[role]=true&populate[profilePicture]=true`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const pb = new PocketBase(process.env.NEXT_PUBLIC_PB_URL);
+        const authData = JSON.parse(localStorage.getItem("pocketbase_auth") || "{}");
+        const userId = authData?.record?.id;
 
-        const userData = response.data;
+        if (!userId) return;
 
-        setUserData(userData);
-        setFormData({
-          ...userData,
-          profilePicture: userData.profilePicture || null,
-        });
+        const user = await pb.collection("users").getOne(userId);
+        setUserData(user);
+        setFormData({ ...user });
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
 
-    if (isClient) {
-      fetchProfile();
-    }
-  }, [isClient]);
+    fetchProfile();
+  }, [isLoggedIn, router]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhoneChange = (isValid, value, countryData) => {
+    const countryCode = countryData.dialCode; // Get the country code
+    const formattedPhone = value.startsWith(`+${countryCode}`)
+    ? value // Already includes country code
+    : `+${countryCode}${value.replace(/\D/g, "")}`; // Add country code if missing
+    setFormData((prev) => ({ ...prev, phone: formattedPhone }));
+  };
+
+  const handleAvatarChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setProfilePictureFile(e.target.files[0]);
+      setAvatarFile(e.target.files[0]);
     }
   };
 
   const handleSubmit = async () => {
-    const token = localStorage.getItem("token");
-
-    if (!token) return;
-
-    if (profilePictureFile) {
-      const formData = new FormData();
-      formData.append("files", profilePictureFile);
-      formData.append("ref", "plugin::users-permissions.user");
-      formData.append("refId", String(userData?.id));
-      formData.append("field", "profilePicture");
-
-      try {
-        const uploadRes = await axios.post(
-          `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/upload`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const uploadData = uploadRes.data;
-        if (uploadData.length > 0) {
-          setFormData((prev) => ({
-            ...prev,
-            profilePicture: uploadData[0],
-          }));
-        }
-      } catch (error) {
-        console.error("Error uploading profile picture:", error);
-      }
-    }
-
     try {
-      const res = await axios.put(
-        `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/users/me`,
-        {
-          ...formData,
-          profilePicture: formData.profilePicture?.id,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const pb = new PocketBase(process.env.NEXT_PUBLIC_PB_URL);
 
-      const data = res.data;
-      if (!data.error) {
-        setUserData(data);
-        setEditing(false);
+      let avatarUrl = userData?.avatar || null;
+
+      if (avatarFile) {
+        const formDataUpload = new FormData();
+        formDataUpload.append("avatar", avatarFile);
+
+        const uploadRes = await pb.collection("users").update(userData.id, formDataUpload);
+        avatarUrl = uploadRes.avatar;
       }
+
+      const updatedUser = await pb.collection("users").update(userData.id, {
+        ...formData,
+        avatar: avatarUrl,
+      });
+
+      setUserData(updatedUser);
+      setEditing(false);
     } catch (error) {
       console.error("Error updating user data:", error);
     }
   };
 
-  const getRoleName = (role: { id: number; name: string }) => {
-    return role.name || "Unknown Role";
-  };
-
   if (!userData) return <p>Loading...</p>;
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4 dark:text-dt-dark">Profile</h1>
+    <div className="max-w-4xl mx-auto p-6 relative">
+      <h1 className="text-2xl font-bold mb-4">Profile</h1>
       <div className="flex justify-between mb-6">
         <div className="flex items-center space-x-4">
-          <Image
-            src={
-              userData.profilePicture?.url
-                ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${userData.profilePicture.url}`
-                : "/default-profile.png"
-            }
-            alt="Profile Picture"
-            width={64}
-            height={64}
-            className="w-16 h-16 rounded-full border border-gray-900 dark:border-gray-600"
-            unoptimized
-          />
+          {/* Avatar Section */}
+          <div className="flex flex-col items-center space-y-2">
+            <div
+              className="relative cursor-pointer"
+              onClick={() => document.getElementById("avatarInput")?.click()}
+            >
+              <Image
+                src={
+                  userData.avatar
+                    ? `${process.env.NEXT_PUBLIC_PB_URL}/api/files/users/${userData.id}/${userData.avatar}`
+                    : "/default-profile.png"
+                }
+                alt="Avatar"
+                width={128}
+                height={128}
+                className="w-32 h-32 rounded-full border"
+                unoptimized
+              />
+              <div className="absolute bottom-0 right-0 bg-gray-800 text-white text-xs p-1 rounded-full">
+                Edit
+              </div>
+            </div>
+            <input
+              type="file"
+              id="avatarInput"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              className="hidden"
+            />
+            <button
+              onClick={() => document.getElementById("avatarInput")?.click()}
+              className="btn-secondary"
+            >
+              Change Picture
+            </button>
+          </div>
+
+          {/* User Info */}
           <div>
-            <p className="text-xl font-semibold dark:text-dt-dark">
+            <p className="text-xl font-semibold">
               {userData.firstName} {userData.lastName}
             </p>
-            <p className="dark:text-dt-dark">{getRoleName(userData.role)}</p>
+            <p>{userData.role || "User"}</p>
           </div>
         </div>
-        {editing && (
-          <button onClick={handleSubmit} className="btn">
-            Save
-          </button>
-        )}
       </div>
+
+      {/* Form Section */}
       <div className="grid grid-cols-2 gap-4">
-        {["firstName", "lastName", "email", "phoneNumber", "dateOfBirth"].map((field) => (
+        {["firstName", "lastName", "email", "dateOfBirth"].map((field) => (
           <div key={field}>
-            <label htmlFor={field} className="block dark:text-dt-dark">
+            <label htmlFor={field} className="block">
               {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, " $1")}
             </label>
             <input
               type={field === "dateOfBirth" ? "date" : "text"}
               name={field}
-              value={String(formData[field as keyof UserProfile] || "")} // Convert to string
+              value={formData[field] || ""}
               onChange={handleChange}
-              className="input border border-gray-500 dark:border-gray-600"
+              className="input border"
               onFocus={() => setEditing(true)}
             />
           </div>
         ))}
-        <div className="col-span-2">
-          <label htmlFor="profilePicture" className="block dark:text-dt-dark">
-            Profile Picture
+        <div>
+          <label htmlFor="phone" className="block">
+            Phone Number
           </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleProfilePictureChange}
-            className="input border border-gray-500 dark:border-gray-600"
+          <IntlTelInput
+            preferredCountries={["us", "gb", "de"]} // Set preferred countries
+            excludeCountries={["il"]} // Exclude Israel
+            onPhoneNumberChange={(isValid, value, countryData) => handlePhoneChange(isValid, value, countryData)}
+            inputClassName="w-full border p-2 rounded"
           />
+
         </div>
         <div className="col-span-2">
-          <label htmlFor="bio" className="block dark:text-dt-dark">
+          <label htmlFor="bio" className="block">
             Bio
           </label>
           <textarea
             name="bio"
-            value={formData.bio}
+            value={formData.bio || ""}
             onChange={handleChange}
-            className="textarea dark:text-dt-dark w-full h-52 resize-none border border-gray-500 dark:border-gray-100"
+            className="textarea w-full h-52 resize-none border"
             onFocus={() => setEditing(true)}
           />
         </div>
+      </div>
+
+      {/* Apply Button */}
+      <div className="">
+        <button
+          onClick={handleSubmit}
+          className="btn-primary px-6 py-2 bg-main-700 text-white rounded hover:bg-main-800 transition-colors mt-4"
+          disabled={!editing}
+        >
+          Apply Changes
+        </button>
       </div>
     </div>
   );

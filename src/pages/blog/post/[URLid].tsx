@@ -1,88 +1,45 @@
 import qs from "qs";
 import Image from "next/image";
-import { useRouter } from "next/router";
-
 
 // Define the structure of the post data based on your Strapi model
 type Post = {
   id: number;
-  attributes: {
-    Title: string;
-    Post: Array<{
-      type: string;
-      children: Array<{
-        text: string;
-      }>;
+  Title: string;
+  Post: Array<{
+    children: Array<{
+      text: string;
     }>;
-    Images: {
-      data: Array<{
-        attributes: {
-          url: string;
-        };
-      }>;
-    };
-    URLid: string;
-    createdAt: string;
-    Author: {
-      data: {
-        attributes: {
-          username: string;
-          profilePicture: {
-            data: {
-              attributes: {
-                url: string;
-              };
-            };
-          };
-        };
-      };
-    };
+  }>;
+  Images: Array<{ url: string }>;
+  URLid: string;
+  Author: {
+    username: string;
   };
+  createdAt: string;
 };
 
-async function fetchPost(id: number): Promise<Post | null> {
+async function fetchPost(URLid: string): Promise<Post | null> {
   const query = qs.stringify({
     filters: {
-      id: id, // Filter by the ID field
+      URLid: URLid,
     },
-    populate: {
-      Images: true, // Populate the Images field
-      Author: {
-        populate: ["profilePicture"], // Populate the Author and their profilePicture
-      },
-    },
-  }
-  
-);
+    populate: "*", // Fetch all related fields
+  });
 
-const apiUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/posts?${query}`;
-console.log("API URL:", apiUrl); // Log the full API URL
+  const postsPromise = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts?${query}`);
+  const response = await postsPromise.json();
 
-  try {
-    const postsPromise = await fetch(apiUrl);
-
-    if (!postsPromise.ok) {
-      throw new Error(`HTTP error! Status: ${postsPromise.status}`);
-    }
-
-    const response = await postsPromise.json();
-    console.log("API Response:", response); // Log the API response
-
-    return response.data.length > 0 ? response.data[0] : null;
-  } catch (error) {
-    console.error("Fetch error:", error);
-    return null;
-  }
+  return response.data.length > 0 ? response.data[0] : null;
 }
 
 type Params = {
-  id: string;
+  URLid: string;
 };
 
 export async function getServerSideProps({ params }: { params: Params }) {
-  const { id } = params;
+  const { URLid } = params;
 
-  const post = await fetchPost(Number(id)); // Convert the ID to a number
+  const post = await fetchPost(URLid);
 
   if (!post) {
     return {
@@ -102,83 +59,55 @@ type Props = {
 };
 
 const PostPage = ({ post }: Props) => {
-  const router = useRouter();
-
-  if (router.isFallback) {
-    return <p>Loading...</p>;
-  }
-
   if (!post) {
     return <div>Post not found!</div>;
   }
 
-  // Construct image URLs
-  const imageUrls = post.attributes.Images.data.map((image) => (
-    `${process.env.NEXT_PUBLIC_STRAPI_URL}${image.attributes.url}`
-  ));
-
-  // Construct post content
-  const postContent = post.attributes.Post.map((block) => {
-    if (block.children) {
-      return block.children.map((child) => child.text).join(" ");
-    }
-    return "";
-  }).join(" ");
-
-  // Construct author data
-  const author = post.attributes.Author.data.attributes;
-  const profilePictureUrl = author.profilePicture.data
-    ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${author.profilePicture.data.attributes.url}`
-    : null;
+  const descriptionContent =
+    post.Post?.map((block) => {
+      if (block.children) {
+        return block.children.map((child) => child.text).join(" ");
+      }
+      return "";
+    }).join(" ") || "No content available.";
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      {/* Author Section */}
-      <div className="flex items-center mb-6">
-        {profilePictureUrl && (
-          <div className="w-12 h-12 relative mr-4">
+    <div className="bg-gray-900 min-h-screen py-8">
+      <div className="container mx-auto px-4">
+        <h1 className="text-3xl font-semibold text-orange-400">{post.Title}</h1>
+        <p className="text-sm text-gray-400 mt-2">
+          Posted on {new Date(post.createdAt).toLocaleDateString()} by {post.Author.username}
+        </p>
+        <div className="flex items-center space-x-6 my-6">
+          {post.Images.length > 0 && (
             <Image
-              src={profilePictureUrl}
-              alt={author.username}
-              layout="fill"
-              className="rounded-full"
+              className="rounded-lg"
+              src={`${process.env.NEXT_PUBLIC_API_URL2}${post.Images[0].url}`}
+              alt={post.Title}
+              width={128}
+              height={128}
               objectFit="cover"
-              unoptimized // Use this if you encounter issues with image optimization
+              unoptimized
             />
+          )}
+        </div>
+        <p className="text-gray-300 text-sm mt-4">{descriptionContent}</p>
+        {post.Images.length > 1 && (
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            {post.Images.slice(1).map((image, index) => (
+              <Image
+                key={index}
+                src={`${process.env.NEXT_PUBLIC_API_URL2}${image.url}`}
+                alt={`Image ${index + 1}`}
+                width={300}
+                height={200}
+                className="rounded-lg"
+                unoptimized
+              />
+            ))}
           </div>
         )}
-        <div>
-          <p className="font-semibold text-lg">{author.username}</p>
-          <p className="text-sm text-gray-500">
-            Posted on {new Date(post.attributes.createdAt).toLocaleDateString()}
-          </p>
-        </div>
       </div>
-
-      {/* Title */}
-      <h1 className="text-3xl font-bold mb-4">{post.attributes.Title}</h1>
-
-      {/* Post Content */}
-      <div className="prose dark:prose-invert">
-        <p>{postContent}</p>
-      </div>
-
-      {/* Images */}
-      {imageUrls.length > 0 && (
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {imageUrls.map((url, index) => (
-            <div key={index} className="relative h-64">
-              <Image
-                src={url}
-                alt={`Post image ${index + 1}`}
-                layout="fill"
-                className="rounded-lg object-cover"
-                unoptimized // Use this if you encounter issues with image optimization
-              />
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 };
