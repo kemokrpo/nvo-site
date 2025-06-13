@@ -80,9 +80,14 @@ setAuthor(fetchedAuthor);
 
         } catch {
           setAuthor({
-            id: fetchedPost.author,
-            username: "Anonymous",
-          });
+  id: fetchedPost.author,
+  username: "Anonymous",
+  name: "Anonymous",
+  avatar: "/path/to/default/avatar.png",
+  collectionId: "defaultCollectionId",
+  collectionName: "defaultCollectionName",
+});
+
         }
 
         const commentRecords = await pb.collection("comments").getFullList({
