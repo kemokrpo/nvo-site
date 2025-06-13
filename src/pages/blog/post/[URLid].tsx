@@ -36,7 +36,8 @@ const [loading, setLoading] = useState(true);
 const [error, setError] = useState<string | null>(null);
 
 const [newComment, setNewComment] = useState("");
-const [replyTo, setReplyTo] = useState(null);
+const [replyTo, setReplyTo] = useState<string | null>(null);
+
 const [isSubmitting, setIsSubmitting] = useState(false);
 const [hiddenReplies, setHiddenReplies] = useState<Record<string, boolean>>({});
 
@@ -239,7 +240,8 @@ setComments(updatedComments);
       <div className="mb-2 whitespace-pre-wrap">{comment.content}</div>
       <button
         className="text-xs text-blue-600 hover:underline mb-2"
-        onClick={() => setReplyTo(comment.id)}
+        onClick={() => setReplyTo(String(comment.id))}
+
       >
         Reply
       </button>
