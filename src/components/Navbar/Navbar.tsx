@@ -107,24 +107,26 @@ const Navbar = () => {
             <Link href="https://www.best.eu.org/index.jsp" className="hover:underline">BEST International</Link>
           </div>
         </li>
+{/*
 
         <li
-          className="hover:underline relative group"
-          onMouseEnter={() => setProjektiOpen(true)}
-          onMouseLeave={() => setProjektiOpen(false)}
+        className="hover:underline relative group"
+        onMouseEnter={() => setProjektiOpen(true)}
+        onMouseLeave={() => setProjektiOpen(false)}
         >
           <button className="cursor-pointer" onClick={toggleProjekti}>
             {content[language].Projekti}
           </button>
           <div
             className={`absolute p-5 bg-main-700 z-30 top-10 translate-x-[-1rem] translate-y-[-1rem] flex flex-col gap-4 rounded-md text-sm w-[11rem] ${projektiOpen ? "block" : "hidden"}`}
-          >
+            >
             <Link href="/course" className="hover:underline">{content[language].Course}</Link>
             <Link href="/hackathon" className="hover:underline">Hackathon</Link>
             <Link href="/jobfair" className="hover:underline">{content[language].JobFair}</Link>
           </div>
         </li>
 
+*/}
         <li
           className="hover:underline relative group"
           onMouseEnter={() => setJoinOpen(true)}
@@ -168,33 +170,35 @@ const Navbar = () => {
             {content[language].About}
           </button>
           {oNamaOpen && (
-            <div className="absolute p-5 bg-main-700 z-30 top-0 right-0 flex flex-col gap-4 rounded-md text-sm w-[11rem]">
+            <div className="absolute p-5 bg-main-700 z-30 top-0 right-0 flex flex-col gap-4 rounded-md text-sm w-[11rem] translate-y-[-1rem]">
               <Link href="/about" className="hover:underline">BEST Mostar</Link>
               <Link href="/about/teams" className="hover:underline">{content[language].Timovi}</Link>
               <Link href="https://www.best.eu.org/index.jsp" className="hover:underline">BEST International</Link>
             </div>
           )}
         </li>
+{/*
 
-        <li className="hover:underline relative group">
-          <button onClick={toggleProjekti} className="cursor-pointer">
-            {content[language].Projekti}
-          </button>
-          {projektiOpen && (
-            <div className="absolute p-5 bg-main-700 z-30 translate-y-[-4rem] right-0 flex flex-col gap-4 rounded-md text-sm w-[11rem]">
-              <Link href="/course" className="hover:underline">{content[language].Course}</Link>
-              <Link href="/hackathon" className="hover:underline">Hackathon</Link>
-              <Link href="/jobfair" className="hover:underline">{content[language].JobFair}</Link>
-            </div>
-          )}
-        </li>
+<li className="hover:underline relative group">
+<button onClick={toggleProjekti} className="cursor-pointer">
+{content[language].Projekti}
+</button>
+{projektiOpen && (
+  <div className="absolute p-5 bg-main-700 z-30 translate-y-[-4rem] right-0 flex flex-col gap-4 rounded-md text-sm w-[11rem]">
+  <Link href="/course" className="hover:underline">{content[language].Course}</Link>
+  <Link href="/hackathon" className="hover:underline">Hackathon</Link>
+  <Link href="/jobfair" className="hover:underline">{content[language].JobFair}</Link>
+  </div>
+  )}
+  </li>
+  */}
 
         <li className="hover:underline relative group">
           <button onClick={toggleJoin} className="cursor-pointer">
             {isLoggedIn ? content[language].Profile : content[language].Join}
           </button>
           {joinOpen && (
-            <div className="absolute p-5 bg-main-700 z-30 top-0 right-0 flex flex-col gap-4 rounded-md text-sm w-[11rem]">
+            <div className="absolute p-5 bg-main-700 z-30 top-0 right-0 flex flex-col gap-4 rounded-md text-sm w-[11rem] translate-y-[-4rem]">
               {isLoggedIn ? (
                 <>
                   <Link href="/profile" className="hover:underline">{content[language].Me}</Link>
@@ -210,6 +214,12 @@ const Navbar = () => {
               )}
             </div>
           )}
+        </li>
+        <li className="hover:underline">
+          <Link href="/news">{content[language].Novosti}</Link>
+          </li>
+        <li className="hover:underline">
+          <Link href="/blog">Blog</Link>
         </li>
       </ul>
     </section>

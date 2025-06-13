@@ -2,20 +2,20 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import useCheckAuth from "@/hooks/useCheckAuth";
 
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 interface AuthContextType {
   isLoggedIn: boolean;
+  isLoading: boolean;
   login: () => void;
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const isLoggedIn = useCheckAuth(); // Use the custom hook here
+  const { isLoggedIn, isLoading } = useCheckAuth(); // Use the updated hook
   const [isAuthenticated, setIsAuthenticated] = useState(isLoggedIn);
 
   useEffect(() => {
-    setIsAuthenticated(isLoggedIn); // Update state when login status changes
+    setIsAuthenticated(isLoggedIn);
   }, [isLoggedIn]);
 
   const login = () => {
@@ -23,12 +23,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    localStorage.removeItem("pocketbase_auth"); // Clear auth data
+    localStorage.removeItem("pocketbase_auth");
     setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn: isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn: isAuthenticated, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

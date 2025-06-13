@@ -1,38 +1,32 @@
 import { useEffect, useState } from "react";
 
-const useCheckAuth = (): boolean => {
+const useCheckAuth = (): { isLoggedIn: boolean; isLoading: boolean } => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const authData = localStorage.getItem("pocketbase_auth");
-    
 
     if (!authData) {
       setIsLoggedIn(false);
+      setIsLoading(false);
       return;
     }
 
     try {
-      // Directly parse the JSON
       const parsedAuthData = JSON.parse(authData);
-      
-
       const { token } = parsedAuthData as { token: string };
 
-      if (!token) {
-        setIsLoggedIn(false);
-        return;
-      }
-
-      // If token exists, user is logged in
-      setIsLoggedIn(true);
+      setIsLoggedIn(!!token);
     } catch (err) {
       console.error("Error parsing auth data:", err);
       setIsLoggedIn(false);
+    } finally {
+      setIsLoading(false); // Always stop loading after check
     }
   }, []);
 
-  return isLoggedIn;
+  return { isLoggedIn, isLoading };
 };
 
 export default useCheckAuth;

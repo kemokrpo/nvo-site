@@ -12,33 +12,52 @@ const ProfilePage = () => {
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [avatarFile, setAvatarFile] = useState(null);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
   const router = useRouter();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      router.push("/");
-      return;
-    }
-
-    const fetchProfile = async () => {
-      try {
-        const pb = new PocketBase(process.env.NEXT_PUBLIC_PB_URL);
-        const authData = JSON.parse(localStorage.getItem("pocketbase_auth") || "{}");
-        const userId = authData?.record?.id;
-
-        if (!userId) return;
-
-        const user = await pb.collection("users").getOne(userId);
-        setUserData(user);
-        setFormData({ ...user });
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+    const checkAuth = async () => {
+      if (!isLoading && !isLoggedIn) {
+        router.push("/");
+      } else {
+        setIsAuthChecked(true);
       }
     };
+    checkAuth();
+  }, [isLoading, isLoggedIn, router]);
 
-    fetchProfile();
-  }, [isLoggedIn, router]);
+  useEffect(() => {
+  if (!isAuthChecked) return;
+
+  const fetchProfile = async () => {
+    try {
+      const pb = new PocketBase(process.env.NEXT_PUBLIC_PB_URL);
+      const authData = JSON.parse(localStorage.getItem("pocketbase_auth") || "{}");
+      const userId = authData?.record?.id;
+
+      if (!userId) return;
+
+      const user = await pb.collection("users").getOne(userId);
+
+      setUserData(user);
+      setFormData({
+        ...user,
+        dateOfBirth: user.dateOfBirth
+          ? new Date(user.dateOfBirth).toISOString().split("T")[0] // Format to YYYY-MM-DD
+          : "",
+      });
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  fetchProfile();
+}, [isAuthChecked]);
+
+
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,10 +65,10 @@ const ProfilePage = () => {
   };
 
   const handlePhoneChange = (isValid, value, countryData) => {
-    const countryCode = countryData.dialCode; // Get the country code
+    const countryCode = countryData.dialCode;
     const formattedPhone = value.startsWith(`+${countryCode}`)
-    ? value // Already includes country code
-    : `+${countryCode}${value.replace(/\D/g, "")}`; // Add country code if missing
+      ? value
+      : `+${countryCode}${value.replace(/\D/g, "")}`;
     setFormData((prev) => ({ ...prev, phone: formattedPhone }));
   };
 
@@ -85,14 +104,13 @@ const ProfilePage = () => {
     }
   };
 
-  if (!userData) return <p>Loading...</p>;
+  if (!isAuthChecked || !userData) return <p>Loading...</p>;
 
   return (
     <div className="max-w-4xl mx-auto p-6 relative">
       <h1 className="text-2xl font-bold mb-4">Profile</h1>
       <div className="flex justify-between mb-6">
         <div className="flex items-center space-x-4">
-          {/* Avatar Section */}
           <div className="flex flex-col items-center space-y-2">
             <div
               className="relative cursor-pointer"
@@ -121,15 +139,7 @@ const ProfilePage = () => {
               onChange={handleAvatarChange}
               className="hidden"
             />
-            <button
-              onClick={() => document.getElementById("avatarInput")?.click()}
-              className="btn-secondary"
-            >
-              Change Picture
-            </button>
           </div>
-
-          {/* User Info */}
           <div>
             <p className="text-xl font-semibold">
               {userData.firstName} {userData.lastName}
@@ -139,7 +149,6 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      {/* Form Section */}
       <div className="grid grid-cols-2 gap-4">
         {["firstName", "lastName", "email", "dateOfBirth"].map((field) => (
           <div key={field}>
@@ -161,12 +170,12 @@ const ProfilePage = () => {
             Phone Number
           </label>
           <IntlTelInput
-            preferredCountries={["us", "gb", "de"]} // Set preferred countries
-            excludeCountries={["il"]} // Exclude Israel
+            preferredCountries={["us", "gb", "de"]}
+            excludeCountries={["il"]}
             onPhoneNumberChange={(isValid, value, countryData) => handlePhoneChange(isValid, value, countryData)}
+            value={formData.phone || ""}
             inputClassName="w-full border p-2 rounded"
           />
-
         </div>
         <div className="col-span-2">
           <label htmlFor="bio" className="block">
@@ -182,16 +191,13 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      {/* Apply Button */}
-      <div className="">
-        <button
-          onClick={handleSubmit}
-          className="btn-primary px-6 py-2 bg-main-700 text-white rounded hover:bg-main-800 transition-colors mt-4"
-          disabled={!editing}
-        >
-          Apply Changes
-        </button>
-      </div>
+      <button
+        onClick={handleSubmit}
+        className="btn-primary px-6 py-2 bg-main-700 text-white rounded hover:bg-main-800 transition-colors mt-4"
+        disabled={!editing}
+      >
+        Apply Changes
+      </button>
     </div>
   );
 };
