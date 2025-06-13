@@ -109,7 +109,7 @@ useEffect(() => {
   replies: [],
   // ...other fields from CommentType
 }));
-      const commentsWithReplies = buildCommentsTree(commentRecords);
+      const commentsWithReplies = buildCommentsTree(commentsData);
       setComments(commentsWithReplies);
     } catch (err) {
       if (isMounted) {
