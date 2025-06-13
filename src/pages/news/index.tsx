@@ -47,11 +47,17 @@ const NewsIndexPage = () => {
           });
           setPosts(postsWithImages);
         }
-      } catch (error) {
-        if (error.name !== "AbortError") {
-          console.error("Failed to load news posts", error);
-        }
-      } finally {
+      } catch (error: unknown) {
+  if (error instanceof Error) {
+    if (error.name !== "AbortError") {
+      console.error("Failed to load news posts", error);
+    }
+  } else {
+    // handle non-Error type, if needed
+    console.error("Failed to load news posts", error);
+  }
+}
+finally {
         if (isMounted) setLoading(false);
       }
     }, 200);
