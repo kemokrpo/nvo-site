@@ -9,7 +9,8 @@ const BlogPostPage = () => {
   const router = useRouter();
   const { URLid } = router.query;
 
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState<null | RecordModel>(null);
+
   const [author, setAuthor] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
