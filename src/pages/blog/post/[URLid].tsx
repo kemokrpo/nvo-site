@@ -20,7 +20,8 @@ const [author, setAuthor] = useState<null | (RecordModel & {
 
 const [comments, setComments] = useState([]);
 const [loading, setLoading] = useState(true);
-const [error, setError] = useState(null);
+const [error, setError] = useState<string | null>(null);
+
 const [newComment, setNewComment] = useState("");
 const [replyTo, setReplyTo] = useState(null);
 const [isSubmitting, setIsSubmitting] = useState(false);
