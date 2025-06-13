@@ -83,9 +83,9 @@ setAuthor(fetchedAuthor);
   id: fetchedPost.author,
   username: "Anonymous",
   name: "Anonymous",
-  avatar: "/path/to/default/avatar.png",
-  collectionId: "users",       // <-- add this
-  collectionName: "users",     // <-- add this
+  avatar: "",         // or default avatar URL
+  collectionId: "",   // or some default string
+  collectionName: "", // or some default string
 });
 
         }
