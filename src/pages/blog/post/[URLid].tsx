@@ -194,6 +194,7 @@ async function postComment() {
   parent: record.parentId,
   content: record.content,
   replies: [],
+   expand: record.expand,
 }));
 
 const updatedComments = buildCommentsTree(commentsData);
