@@ -98,17 +98,21 @@ useEffect(() => {
       }
 
       const commentRecords = await pb.collection("comments").getFullList({
-        filter: `post = "${fetchedPost.id}"`,
-        sort: "created",
-        expand: "author",
-      });
-      const commentsData: CommentType[] = commentRecords.map(record => ({
+  filter: `post = "${fetchedPost.id}"`,
+  sort: "created",
+  expand: "author",
+});
+
+console.log("Fetched comments in useEffect:", commentRecords); // Debug here
+
+const commentsData: CommentType[] = commentRecords.map(record => ({
   id: record.id,
-  parent: record.parentId,  // adjust keys as needed
+  parent: record.parentId,
   content: record.content,
   replies: [],
-  // ...other fields from CommentType
+  expand: record.expand, // Ensure this contains `author`
 }));
+
       const commentsWithReplies = buildCommentsTree(commentsData);
       setComments(commentsWithReplies);
     } catch (err) {
@@ -154,7 +158,7 @@ useEffect(() => {
 };
 
 
-const toggleReplies = (commentId) => {
+const toggleReplies = (commentId: string) => {
   setHiddenReplies((prev) => ({
     ...prev,
     [commentId]: !prev[commentId],
@@ -184,18 +188,21 @@ async function postComment() {
     setReplyTo(null);
 
     const commentRecords = await pb.collection("comments").getFullList({
-      filter: `post = "${post!.id}"`,
-      sort: "created",
-      expand: "author",
-    });
+  filter: `post = "${post!.id}"`,
+  sort: "created",
+  expand: "author",
+});
 
-    const commentsData: CommentType[] = commentRecords.map(record => ({
+console.log("Fetched comments after posting:", commentRecords); // Debug here
+
+const commentsData: CommentType[] = commentRecords.map(record => ({
   id: record.id,
   parent: record.parentId,
   content: record.content,
   replies: [],
-   expand: record.expand,
+  expand: record.expand, // Ensure this contains `author`
 }));
+
 
 const updatedComments = buildCommentsTree(commentsData);
 setComments(updatedComments);
@@ -212,9 +219,15 @@ setComments(updatedComments);
     <div key={comment.id} className="pl-4 border-l-2 border-gray-300 mb-4">
       <div className="flex justify-between items-center mb-1">
         <span className="text-sm font-semibold">
-  <a href={`/user/${comment.expand.author?.username}`} className="text-blue-600 hover:underline">
-  {comment.expand.author?.username || "Unknown"}
-</a>
+  <span className="text-sm font-semibold">
+  <a 
+    href={`/user/${comment.expand?.author?.username || "#"}`} 
+    className="text-blue-600 hover:underline"
+  >
+    {comment.expand?.author?.username || "Unknown"}
+  </a>
+</span>
+
 
 </span>
 
@@ -276,8 +289,7 @@ setComments(updatedComments);
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
   if (!post) return <p>Post not found.</p>;
-  console.log("Post:", post);
-  console.log("Images:", post.images);
+  
   return (
     <div className="min-h-[80vh] max-w-4xl mx-auto p-5 flex flex-col mt-24 bg-white shadow-lg rounded-lg">
       <div className="mb-4 border-b pb-2">
