@@ -13,7 +13,12 @@ const BlogPostPage = () => {
   const [post, setPost] = useState<null | RecordModel>(null);
 
   // Adjust the useState type definition
-const [author, setAuthor] = useState<null | RecordModel>(null);
+const [author, setAuthor] = useState<null | (RecordModel & { 
+  username: string; 
+  name: string; 
+  avatar: string 
+})>(null);
+
 
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,12 +68,15 @@ const fetchData = async () => {
         fields: "id,username,name,avatar"
       });
       const mappedAuthor = {
-        id: fetchedAuthor.id,
-        username: fetchedAuthor.username,
-        name: fetchedAuthor.name,
-        avatar: fetchedAuthor.avatar,
-      };
-        setAuthor(mappedAuthor); // Use the mapped author
+  id: fetchedAuthor.id,
+  username: fetchedAuthor.username,
+  name: fetchedAuthor.name,
+  avatar: fetchedAuthor.avatar,
+  collectionId: fetchedAuthor.collectionId || "users",
+  collectionName: fetchedAuthor.collectionName || "users",
+};
+setAuthor(mappedAuthor);
+ // Use the mapped author
 } catch (err) {
   console.log("Couldn't fetch author details, using minimal info");
   setAuthor({
