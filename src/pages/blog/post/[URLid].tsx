@@ -18,7 +18,20 @@ const [author, setAuthor] = useState<null | (RecordModel & {
   avatar: string 
 })>(null);
 
-const [comments, setComments] = useState([]);
+type CommentType = {
+  id: string;
+  content: string;
+  parent?: string | null;
+  replies: CommentType[];
+  expand?: {
+    author?: {
+      username?: string;
+    };
+  };
+};
+
+const [comments, setComments] = useState<CommentType[]>([]);
+
 const [loading, setLoading] = useState(true);
 const [error, setError] = useState<string | null>(null);
 
