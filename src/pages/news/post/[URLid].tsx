@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import PocketBase from "pocketbase";
 import SlickSlider from "@/components/SlickSlider/SlickSlider";
+import { RecordModel } from "pocketbase";
 
 
 const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "http://127.0.0.1:8090");
@@ -10,7 +11,8 @@ const NewsPostPage = () => {
   const router = useRouter();
   const { URLid } = router.query;
 
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState<RecordModel | null>(null);
+
   const [author, setAuthor] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
