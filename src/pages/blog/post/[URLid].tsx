@@ -301,7 +301,7 @@ setComments(updatedComments);
       {post.images?.length > 0 && (
         <div className="mt-6">
           <SlickSlider
-            images={post.images.map((img) => pb.files.getURL(post, img))}
+            images={post.images.map((img: string) => pb.files.getURL(post, img))}
             options={{ showArrows: true, showDots: true }}
           />
         </div>
