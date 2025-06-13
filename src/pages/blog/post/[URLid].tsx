@@ -12,21 +12,20 @@ const BlogPostPage = () => {
 
   const [post, setPost] = useState<null | RecordModel>(null);
 
-  // Adjust the useState type definition
 const [author, setAuthor] = useState<null | (RecordModel & { 
   username: string; 
   name: string; 
   avatar: string 
 })>(null);
 
+const [comments, setComments] = useState([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+const [newComment, setNewComment] = useState("");
+const [replyTo, setReplyTo] = useState(null);
+const [isSubmitting, setIsSubmitting] = useState(false);
+const [hiddenReplies, setHiddenReplies] = useState({});
 
-  const [comments, setComments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [newComment, setNewComment] = useState("");
-  const [replyTo, setReplyTo] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hiddenReplies, setHiddenReplies] = useState({});
 
   // Fetch post and comments
   // Update your useEffect to this:
@@ -36,75 +35,68 @@ useEffect(() => {
   let isMounted = true;
   const abortController = new AbortController();
 
-  // Update your data fetching logic in the useEffect:
-const fetchData = async () => {
-  setLoading(true);
-  try {
-    // Fetch the post (public access)
-    const records = await pb.collection("posts").getFullList({
-      filter: `uid = "${URLid}" && postType = "blog" && isPublished = true`,
-      limit: 1,
-    });
-
-    if (!isMounted) return;
-
-    if (records.length === 0) {
-      const [error, setError] = useState<null | string>(null);
-
-      setError("Post not found");
-      setPost(null);
-      setAuthor(null);
-      setComments([]);
-      return;
-    }
-
-    const fetchedPost = records[0];
-    setPost(fetchedPost);
-
-    // Try to fetch author, but handle case when not available
+  const fetchData = async () => {
+    setLoading(true);
     try {
-      const fetchedAuthor = await pb.collection("users").getOne(fetchedPost.author, {
-        // Request minimal public fields only
-        fields: "id,username,name,avatar"
+      const records = await pb.collection("posts").getFullList({
+        filter: `uid = "${URLid}" && postType = "blog" && isPublished = true`,
+        limit: 1,
       });
-      const mappedAuthor = {
-  id: fetchedAuthor.id,
-  username: fetchedAuthor.username,
-  name: fetchedAuthor.name,
-  avatar: fetchedAuthor.avatar,
-  collectionId: fetchedAuthor.collectionId || "users",
-  collectionName: fetchedAuthor.collectionName || "users",
-};
-setAuthor(mappedAuthor);
- // Use the mapped author
-} catch (err) {
-  console.log("Couldn't fetch author details, using minimal info");
-  setAuthor({
-    id: fetchedPost.author,
-    username: "Anonymous",
-  });
-}
 
-    // Fetch comments (public access)
-    const commentRecords = await pb.collection("comments").getFullList({
-      filter: `post = "${fetchedPost.id}"`,
-      sort: "created",
-      expand: "author",
-    });
+      if (!isMounted) return;
 
-    const commentsWithReplies = buildCommentsTree(commentRecords);
-    setComments(commentsWithReplies);
-  } catch (err) {
-    if (isMounted) {
-      setError("Failed to load post");
-      setPost(null);
-      setAuthor(null);
-      setComments([]);
+      if (records.length === 0) {
+        setError("Post not found");
+        setPost(null);
+        setAuthor(null);
+        setComments([]);
+        return;
+      }
+
+      const fetchedPost = records[0];
+      setPost(fetchedPost);
+
+      try {
+        const fetchedAuthor = await pb.collection("users").getOne(fetchedPost.author, {
+          fields: "id,username,name,avatar"
+        });
+
+        const mappedAuthor = {
+          id: fetchedAuthor.id,
+          username: fetchedAuthor.username,
+          name: fetchedAuthor.name,
+          avatar: fetchedAuthor.avatar,
+          collectionId: fetchedAuthor.collectionId || "users",
+          collectionName: fetchedAuthor.collectionName || "users",
+        };
+        setAuthor(mappedAuthor);
+      } catch (err) {
+        console.log("Couldn't fetch author details, using minimal info");
+        setAuthor({
+          id: fetchedPost.author,
+          username: "Anonymous",
+        });
+      }
+
+      const commentRecords = await pb.collection("comments").getFullList({
+        filter: `post = "${fetchedPost.id}"`,
+        sort: "created",
+        expand: "author",
+      });
+
+      const commentsWithReplies = buildCommentsTree(commentRecords);
+      setComments(commentsWithReplies);
+    } catch (err) {
+      if (isMounted) {
+        setError("Failed to load post");
+        setPost(null);
+        setAuthor(null);
+        setComments([]);
+      }
+    } finally {
+      if (isMounted) setLoading(false);
     }
-  } finally {
-    if (isMounted) setLoading(false);
-  }
-};
+  };
 
   fetchData();
 
@@ -113,6 +105,7 @@ setAuthor(mappedAuthor);
     abortController.abort();
   };
 }, [URLid]);
+
 
   const buildCommentsTree = (flatComments) => {
     const map = new Map();
