@@ -59,19 +59,23 @@ const fetchData = async () => {
     // Try to fetch author, but handle case when not available
     try {
       const fetchedAuthor = await pb.collection("users").getOne(fetchedPost.author, {
+        // Request minimal public fields only
+        fields: "id,username,name,avatar"
+      });
+      const mappedAuthor = {
         id: fetchedAuthor.id,
-  username: fetchedAuthor.username,
-  name: fetchedAuthor.name,
-  avatar: fetchedAuthor.avatar,
-      });
-      setAuthor(fetchedAuthor);
-    } catch (err) {
-      console.log("Couldn't fetch author details, using minimal info");
-      setAuthor({
-        id: fetchedPost.author,
-        username: "Anonymous",
-      });
-    }
+        username: fetchedAuthor.username,
+        name: fetchedAuthor.name,
+        avatar: fetchedAuthor.avatar,
+      };
+        setAuthor(mappedAuthor); // Use the mapped author
+} catch (err) {
+  console.log("Couldn't fetch author details, using minimal info");
+  setAuthor({
+    id: fetchedPost.author,
+    username: "Anonymous",
+  });
+}
 
     // Fetch comments (public access)
     const commentRecords = await pb.collection("comments").getFullList({
