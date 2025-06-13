@@ -6,6 +6,7 @@ import JobFairLayout from "@/pages/jobfair/components/Layout/Layout";
 import HackathonLayout from "@/pages/hackathon/components/Layout/Layout";
 import CourseLayout from "@/pages/course/components/Layout/Layout";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { pathname } = useRouter();
@@ -22,9 +23,13 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <LanguageProvider>
+      <AuthProvider>
+       
       <SelectedLayout>
         <Component {...pageProps} />
       </SelectedLayout>
+      </AuthProvider>
+      
     </LanguageProvider>
   );
 }

@@ -37,6 +37,10 @@ body {
 }
 
 
+.break-all {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
 
 
 body, html {

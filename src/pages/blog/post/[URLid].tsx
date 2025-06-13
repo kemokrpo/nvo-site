@@ -1,186 +1,286 @@
-import qs from "qs";
-import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import PocketBase from "pocketbase";
+import SlickSlider from "@/components/SlickSlider/SlickSlider";
 
+const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "http://127.0.0.1:8090");
 
-// Define the structure of the post data based on your Strapi model
-type Post = {
-  id: number;
-  attributes: {
-    Title: string;
-    Post: Array<{
-      type: string;
-      children: Array<{
-        text: string;
-      }>;
-    }>;
-    Images: {
-      data: Array<{
-        attributes: {
-          url: string;
-        };
-      }>;
-    };
-    URLid: string;
-    createdAt: string;
-    Author: {
-      data: {
-        attributes: {
-          username: string;
-          profilePicture: {
-            data: {
-              attributes: {
-                url: string;
-              };
-            };
-          };
-        };
-      };
-    };
-  };
+const BlogPostPage = () => {
+  const router = useRouter();
+  const { URLid } = router.query;
+
+  const [post, setPost] = useState(null);
+  const [author, setAuthor] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [newComment, setNewComment] = useState("");
+  const [replyTo, setReplyTo] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hiddenReplies, setHiddenReplies] = useState({});
+
+  // Fetch post and comments
+  // Update your useEffect to this:
+useEffect(() => {
+  if (!URLid || typeof URLid !== "string") return;
+
+  let isMounted = true;
+  const abortController = new AbortController();
+
+  // Update your data fetching logic in the useEffect:
+const fetchData = async () => {
+  setLoading(true);
+  try {
+    // Fetch the post (public access)
+    const records = await pb.collection("posts").getFullList({
+      filter: `uid = "${URLid}" && postType = "blog" && isPublished = true`,
+      limit: 1,
+    });
+
+    if (!isMounted) return;
+
+    if (records.length === 0) {
+      setError("Post not found");
+      setPost(null);
+      setAuthor(null);
+      setComments([]);
+      return;
+    }
+
+    const fetchedPost = records[0];
+    setPost(fetchedPost);
+
+    // Try to fetch author, but handle case when not available
+    try {
+      const fetchedAuthor = await pb.collection("users").getOne(fetchedPost.author, {
+        // Request minimal public fields only
+        fields: "id,username,name,avatar"
+      });
+      setAuthor(fetchedAuthor);
+    } catch (err) {
+      console.log("Couldn't fetch author details, using minimal info");
+      setAuthor({
+        id: fetchedPost.author,
+        username: "Anonymous",
+      });
+    }
+
+    // Fetch comments (public access)
+    const commentRecords = await pb.collection("comments").getFullList({
+      filter: `post = "${fetchedPost.id}"`,
+      sort: "created",
+      expand: "author",
+    });
+
+    const commentsWithReplies = buildCommentsTree(commentRecords);
+    setComments(commentsWithReplies);
+  } catch (err) {
+    if (isMounted) {
+      setError("Failed to load post");
+      setPost(null);
+      setAuthor(null);
+      setComments([]);
+    }
+  } finally {
+    if (isMounted) setLoading(false);
+  }
 };
 
-async function fetchPost(id: number): Promise<Post | null> {
-  const query = qs.stringify({
-    filters: {
-      id: id, // Filter by the ID field
-    },
-    populate: {
-      Images: true, // Populate the Images field
-      Author: {
-        populate: ["profilePicture"], // Populate the Author and their profilePicture
-      },
-    },
-  }
-  
-);
+  fetchData();
 
-const apiUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL_API}/posts?${query}`;
-console.log("API URL:", apiUrl); // Log the full API URL
+  return () => {
+    isMounted = false;
+    abortController.abort();
+  };
+}, [URLid]);
+
+  const buildCommentsTree = (flatComments) => {
+    const map = new Map();
+    const roots = [];
+
+    flatComments.forEach((c) => {
+      c.replies = [];
+      map.set(c.id, c);
+    });
+
+    flatComments.forEach((c) => {
+      if (c.parent) {
+        const parent = map.get(c.parent);
+        if (parent) parent.replies.push(c);
+      } else {
+        roots.push(c);
+      }
+    });
+
+    return roots;
+  };
+
+  const toggleReplies = (commentId) => {
+    setHiddenReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  // Post a new comment or reply
+async function postComment() {
+  if (!newComment.trim()) return;
 
   try {
-    const postsPromise = await fetch(apiUrl);
-
-    if (!postsPromise.ok) {
-      throw new Error(`HTTP error! Status: ${postsPromise.status}`);
+    const currentUser = pb.authStore.model;
+    if (!currentUser) {
+      alert("Please log in to comment");
+      return;
     }
 
-    const response = await postsPromise.json();
-    console.log("API Response:", response); // Log the API response
-
-    return response.data.length > 0 ? response.data[0] : null;
-  } catch (error) {
-    console.error("Fetch error:", error);
-    return null;
-  }
-}
-
-type Params = {
-  id: string;
-};
-
-export async function getServerSideProps({ params }: { params: Params }) {
-  const { id } = params;
-
-  const post = await fetchPost(Number(id)); // Convert the ID to a number
-
-  if (!post) {
-    return {
-      notFound: true,
+    const data = {
+      content: newComment.trim(),
+      author: currentUser.id,
+      post: post!.id,
+      parent: replyTo,
     };
-  }
 
-  return {
-    props: {
-      post,
-    },
-  };
+    await pb.collection("comments").create(data);
+
+    // Clear inputs
+    setNewComment("");
+    setReplyTo(null);
+
+    // Refetch comments to update UI with backend data
+    const commentRecords = await pb.collection("comments").getFullList<Comment>({
+      filter: `post = "${post!.id}"`,
+      sort: "created",
+      expand: "author",
+    });
+
+    const updatedComments = buildCommentsTree(commentRecords);
+    setComments(updatedComments);
+  } catch (err) {
+    alert("Failed to post comment");
+  }
 }
 
-type Props = {
-  post: Post;
-};
 
-const PostPage = ({ post }: Props) => {
-  const router = useRouter();
+  const renderComments = (commentsList) => {
+  return commentsList.map((comment) => (
+    <div key={comment.id} className="pl-4 border-l-2 border-gray-300 mb-4">
+      <div className="flex justify-between items-center mb-1">
+        <span className="text-sm font-semibold">
+  <a
+    href={`/user/${comment.expand.author?.username}`}
+    className="text-blue-600 hover:underline"
+  >
+    {comment.expand.author?.username || "Unknown"}
+  </a>
+</span>
 
-  if (router.isFallback) {
-    return <p>Loading...</p>;
-  }
-
-  if (!post) {
-    return <div>Post not found!</div>;
-  }
-
-  // Construct image URLs
-  const imageUrls = post.attributes.Images.data.map((image) => (
-    `${process.env.NEXT_PUBLIC_STRAPI_URL}${image.attributes.url}`
-  ));
-
-  // Construct post content
-  const postContent = post.attributes.Post.map((block) => {
-    if (block.children) {
-      return block.children.map((child) => child.text).join(" ");
-    }
-    return "";
-  }).join(" ");
-
-  // Construct author data
-  const author = post.attributes.Author.data.attributes;
-  const profilePictureUrl = author.profilePicture.data
-    ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${author.profilePicture.data.attributes.url}`
-    : null;
-
-  return (
-    <div className="max-w-4xl mx-auto p-6">
-      {/* Author Section */}
-      <div className="flex items-center mb-6">
-        {profilePictureUrl && (
-          <div className="w-12 h-12 relative mr-4">
-            <Image
-              src={profilePictureUrl}
-              alt={author.username}
-              layout="fill"
-              className="rounded-full"
-              objectFit="cover"
-              unoptimized // Use this if you encounter issues with image optimization
-            />
-          </div>
+        {comment.replies.length > 0 && (
+          <button
+            className="text-xs text-blue-600 hover:underline"
+            onClick={() => toggleReplies(comment.id)}
+          >
+            {hiddenReplies[comment.id] ? "Show Replies" : "Hide Replies"}
+          </button>
         )}
-        <div>
-          <p className="font-semibold text-lg">{author.username}</p>
-          <p className="text-sm text-gray-500">
-            Posted on {new Date(post.attributes.createdAt).toLocaleDateString()}
-          </p>
-        </div>
       </div>
+      
+      <div className="mb-2 whitespace-pre-wrap">{comment.content}</div> 
+      <button
+        className="text-xs text-blue-600 hover:underline mb-2"
+        onClick={() => setReplyTo(comment.id)}
+      >
+        Reply
+      </button>
 
-      {/* Title */}
-      <h1 className="text-3xl font-bold mb-4">{post.attributes.Title}</h1>
-
-      {/* Post Content */}
-      <div className="prose dark:prose-invert">
-        <p>{postContent}</p>
-      </div>
-
-      {/* Images */}
-      {imageUrls.length > 0 && (
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {imageUrls.map((url, index) => (
-            <div key={index} className="relative h-64">
-              <Image
-                src={url}
-                alt={`Post image ${index + 1}`}
-                layout="fill"
-                className="rounded-lg object-cover"
-                unoptimized // Use this if you encounter issues with image optimization
-              />
-            </div>
-          ))}
+      {replyTo === comment.id && (
+        <div className="mb-4">
+          <textarea
+            rows={3}
+            className="w-full p-2 border rounded"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Write your reply..."
+          />
+          <button
+            className="mt-1 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+            onClick={postComment}
+          >
+            Post Reply
+          </button>
+          <button
+            className="ml-2 px-3 py-1 bg-gray-400 text-white rounded hover:bg-gray-500"
+            onClick={() => {
+              setReplyTo(null);
+              setNewComment("");
+            }}
+          >
+            Cancel
+          </button>
         </div>
       )}
+
+      {comment.replies.length > 0 && !hiddenReplies[comment.id] && (
+        <div className="mt-2">
+          {renderComments(comment.replies)}
+        </div>
+      )}
+    </div>
+  ));
+};
+
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+  if (!post) return <p>Post not found.</p>;
+  console.log("Post:", post);
+  console.log("Images:", post.images);
+  return (
+    <div className="min-h-[80vh] max-w-4xl mx-auto p-5 flex flex-col mt-24 bg-white shadow-lg rounded-lg">
+      <div className="mb-4 border-b pb-2">
+        <h1 className="text-3xl font-bold">{post.title}</h1>
+        <p className="text-sm text-gray-600">Created: {new Date(post.created).toLocaleDateString()}</p>
+        <p className="text-sm text-gray-600">
+          Author: <a
+       href={`/user/${author?.username}`}
+        className="text-blue-600 hover:underline">{author?.username || "Unknown"}</a></p>
+      </div>
+
+      <div className="prose max-w-none mb-6 break-words whitespace-pre-wrap overflow-hidden">
+        {typeof post.content === "string" ? <p>{post.content}</p> : <>{post.content.body}</>}
+      </div>
+
+      {post.images?.length > 0 && (
+        <div className="mt-6">
+          <SlickSlider
+            images={post.images.map((img) => pb.files.getURL(post, img))}
+            options={{ showArrows: true, showDots: true }}
+          />
+        </div>
+      )}
+
+      <div className="mt-10">
+        <h2 className="text-2xl font-semibold mb-4">Comments</h2>
+        {!replyTo && (
+          <div className="mb-6">
+            <textarea
+              rows={4}
+              className="w-full p-2 border rounded"
+              placeholder="Write a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+            <button
+              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              onClick={postComment}
+            >
+              Post Comment
+            </button>
+          </div>
+        )}
+        {renderComments(comments)}
+      </div>
     </div>
   );
 };
 
-export default PostPage;
+export default BlogPostPage;
