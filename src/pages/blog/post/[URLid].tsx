@@ -12,7 +12,9 @@ const BlogPostPage = () => {
 
   const [post, setPost] = useState<null | RecordModel>(null);
 
-  const [author, setAuthor] = useState(null);
+  // Adjust the useState type definition
+const [author, setAuthor] = useState<null | RecordModel>(null);
+
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -57,8 +59,10 @@ const fetchData = async () => {
     // Try to fetch author, but handle case when not available
     try {
       const fetchedAuthor = await pb.collection("users").getOne(fetchedPost.author, {
-        // Request minimal public fields only
-        fields: "id,username,name,avatar"
+        id: fetchedAuthor.id,
+  username: fetchedAuthor.username,
+  name: fetchedAuthor.name,
+  avatar: fetchedAuthor.avatar,
       });
       setAuthor(fetchedAuthor);
     } catch (err) {
