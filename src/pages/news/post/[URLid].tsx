@@ -23,10 +23,10 @@ const NewsPostPage = () => {
     if (!URLid || typeof URLid !== "string") return;
 
     let isMounted = true;
-    const abortController = new AbortController();
 
     const fetchData = async () => {
       setLoading(true);
+      setError(null);
       try {
         const now = new Date().toISOString();
         const records = await pb.collection("posts").getFullList({
@@ -41,6 +41,7 @@ const NewsPostPage = () => {
           setPost(null);
           setAuthor(null);
           setComments([]);
+          setLoading(false);
           return;
         }
 
@@ -49,11 +50,10 @@ const NewsPostPage = () => {
 
         try {
           const fetchedAuthor = await pb.collection("users").getOne(fetchedPost.author, {
-            fields: "id,username,name,avatar"
+            fields: "id,username,name,avatar",
           });
           setAuthor(fetchedAuthor);
-        } catch (err) {
-          console.log("Couldn't fetch author details, using minimal info");
+        } catch {
           setAuthor({
             id: fetchedPost.author,
             username: "Anonymous",
@@ -66,9 +66,8 @@ const NewsPostPage = () => {
           expand: "author",
         });
 
-        const commentsWithReplies = buildCommentsTree(commentRecords);
-        setComments(commentsWithReplies);
-      } catch (err) {
+        setComments(buildCommentsTree(commentRecords));
+      } catch {
         if (isMounted) {
           setError("Failed to load news post");
           setPost(null);
@@ -84,7 +83,6 @@ const NewsPostPage = () => {
 
     return () => {
       isMounted = false;
-      abortController.abort();
     };
   }, [URLid]);
 
@@ -116,20 +114,22 @@ const NewsPostPage = () => {
     }));
   };
 
-  async function postComment() {
+  const postComment = async () => {
     if (!newComment.trim()) return;
+    if (isSubmitting) return;
 
+    const currentUser = pb.authStore.model;
+    if (!currentUser) {
+      alert("Please log in to comment");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
-      const currentUser = pb.authStore.model;
-      if (!currentUser) {
-        alert("Please log in to comment");
-        return;
-      }
-
       const data = {
         content: newComment.trim(),
         author: currentUser.id,
-        post: post!.id,
+        post: post?.id,
         parent: replyTo,
       };
 
@@ -139,28 +139,29 @@ const NewsPostPage = () => {
       setReplyTo(null);
 
       const commentRecords = await pb.collection("comments").getFullList({
-        filter: `post = "${post!.id}"`,
+        filter: `post = "${post?.id}"`,
         sort: "created",
         expand: "author",
       });
 
-      const updatedComments = buildCommentsTree(commentRecords);
-      setComments(updatedComments);
-    } catch (err) {
+      setComments(buildCommentsTree(commentRecords));
+    } catch {
       alert("Failed to post comment");
+    } finally {
+      setIsSubmitting(false);
     }
-  }
+  };
 
-  const renderComments = (commentsList) => {
-    return commentsList.map((comment) => (
+  const renderComments = (commentsList) =>
+    commentsList.map((comment) => (
       <div key={comment.id} className="pl-4 border-l-2 border-gray-300 mb-4">
         <div className="flex justify-between items-center mb-1">
           <span className="text-sm font-semibold">
             <a
-              href={`/user/${comment.expand.author?.username}`}
+              href={`/user/${comment.expand?.author?.username || "unknown"}`}
               className="text-blue-600 hover:underline"
             >
-              {comment.expand.author?.username || "Unknown"}
+              {comment.expand?.author?.username || "Unknown"}
             </a>
           </span>
 
@@ -173,8 +174,8 @@ const NewsPostPage = () => {
             </button>
           )}
         </div>
-        
-        <div className="mb-2 whitespace-pre-wrap">{comment.content}</div> 
+
+        <div className="mb-2 whitespace-pre-wrap">{comment.content}</div>
         <button
           className="text-xs text-blue-600 hover:underline mb-2"
           onClick={() => setReplyTo(comment.id)}
@@ -192,10 +193,11 @@ const NewsPostPage = () => {
               placeholder="Write your reply..."
             />
             <button
-              className="mt-1 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+              disabled={isSubmitting}
+              className="mt-1 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
               onClick={postComment}
             >
-              Post Reply
+              {isSubmitting ? "Posting..." : "Post Reply"}
             </button>
             <button
               className="ml-2 px-3 py-1 bg-gray-400 text-white rounded hover:bg-gray-500"
@@ -210,13 +212,10 @@ const NewsPostPage = () => {
         )}
 
         {comment.replies.length > 0 && !hiddenReplies[comment.id] && (
-          <div className="mt-2">
-            {renderComments(comment.replies)}
-          </div>
+          <div className="mt-2">{renderComments(comment.replies)}</div>
         )}
       </div>
     ));
-  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -226,15 +225,18 @@ const NewsPostPage = () => {
     <div className="min-h-[80vh] max-w-4xl mx-auto p-5 flex flex-col mt-24 bg-white shadow-lg rounded-lg">
       <div className="mb-4 border-b pb-2">
         <h1 className="text-3xl font-bold">{post.title}</h1>
-        <p className="text-sm text-gray-600">Created: {new Date(post.created).toLocaleDateString()}</p>
+        <p className="text-sm text-gray-600">
+          Created: {new Date(post.created).toLocaleDateString()}
+        </p>
         {post.scheduledPublish && (
           <p className="text-sm text-gray-600">
             Published: {new Date(post.scheduledPublish).toLocaleDateString()}
           </p>
         )}
         <p className="text-sm text-gray-600">
-          Author: <a
-            href={`/user/${author?.username}`}
+          Author:{" "}
+          <a
+            href={`/user/${author?.username || "unknown"}`}
             className="text-blue-600 hover:underline"
           >
             {author?.username || "Unknown"}
@@ -243,7 +245,11 @@ const NewsPostPage = () => {
       </div>
 
       <div className="prose max-w-none mb-6 break-words whitespace-pre-wrap overflow-hidden">
-        {typeof post.content === "string" ? <p>{post.content}</p> : <>{post.content.body}</>}
+        {typeof post.content === "string" ? (
+          <p>{post.content}</p>
+        ) : (
+          <>{post.content?.body || ""}</>
+        )}
       </div>
 
       {post.images?.length > 0 && (
@@ -267,10 +273,11 @@ const NewsPostPage = () => {
               onChange={(e) => setNewComment(e.target.value)}
             />
             <button
-              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              disabled={isSubmitting}
+              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
               onClick={postComment}
             >
-              Post Comment
+              {isSubmitting ? "Posting..." : "Post Comment"}
             </button>
           </div>
         )}
