@@ -84,8 +84,8 @@ setAuthor(fetchedAuthor);
   username: "Anonymous",
   name: "Anonymous",
   avatar: "/path/to/default/avatar.png",
-  collectionId: "defaultCollectionId",
-  collectionName: "defaultCollectionName",
+  collectionId: "users",       // <-- add this
+  collectionName: "users",     // <-- add this
 });
 
         }
