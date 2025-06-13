@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import PocketBase from "pocketbase";
 import SlickSlider from "@/components/SlickSlider/SlickSlider";
 
+
 const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "http://127.0.0.1:8090");
 
 const NewsPostPage = () => {
@@ -13,7 +14,8 @@ const NewsPostPage = () => {
   const [author, setAuthor] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+
   const [newComment, setNewComment] = useState("");
   const [replyTo, setReplyTo] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
