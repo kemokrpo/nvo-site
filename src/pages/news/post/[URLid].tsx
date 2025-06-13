@@ -74,9 +74,10 @@ const NewsPostPage = () => {
 
         try {
           const fetchedAuthor = await pb.collection("users").getOne(fetchedPost.author, {
-            fields: "id,username,name,avatar",
-          });
-          setAuthor(fetchedAuthor);
+  fields: "id,username,name,avatar",
+}) as RecordModel & { username: string; name: string; avatar: string };
+setAuthor(fetchedAuthor);
+
         } catch {
           setAuthor({
             id: fetchedPost.author,
