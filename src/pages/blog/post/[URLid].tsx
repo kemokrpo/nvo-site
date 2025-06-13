@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import PocketBase from "pocketbase";
 import SlickSlider from "@/components/SlickSlider/SlickSlider";
+import { RecordModel } from "pocketbase";
 
 const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "http://127.0.0.1:8090");
 
