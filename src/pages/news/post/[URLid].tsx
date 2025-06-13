@@ -9,19 +9,39 @@ const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "http://127.
 
 const NewsPostPage = () => {
   const router = useRouter();
-  const { URLid } = router.query;
-
-  const [post, setPost] = useState<RecordModel | null>(null);
-
-  const [author, setAuthor] = useState(null);
-  const [comments, setComments] = useState([]);
+    const { URLid } = router.query;
+  
+    const [post, setPost] = useState<null | RecordModel>(null);
+  
+  const [author, setAuthor] = useState<null | (RecordModel & { 
+    username: string; 
+    name: string; 
+    avatar: string 
+  })>(null);
+  
+  type CommentType = {
+    id: string;
+    content: string;
+    parent?: string | null;
+    replies: CommentType[];
+    expand?: {
+      author?: {
+        username?: string;
+      };
+    };
+  };
+  
+  const [comments, setComments] = useState<CommentType[]>([]);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  
   const [newComment, setNewComment] = useState("");
-  const [replyTo, setReplyTo] = useState(null);
+  const [replyTo, setReplyTo] = useState<string | null>(null);
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hiddenReplies, setHiddenReplies] = useState({});
+  const [hiddenReplies, setHiddenReplies] = useState<Record<string, boolean>>({});
+  
 
   useEffect(() => {
     if (!URLid || typeof URLid !== "string") return;
