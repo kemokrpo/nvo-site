@@ -49,7 +49,7 @@ const BlogIndexPage = () => {
           setPosts(postsWithImages);
         }
       } catch (error) {
-        if (error.name !== "AbortError") {
+        if ((error as Error).name !== "AbortError") {
           console.error("Failed to load posts", error);
         }
       } finally {
@@ -79,12 +79,7 @@ const BlogIndexPage = () => {
   if (loading) return <p>Loading posts...</p>;
   if (!posts) return <p>No posts found</p>;
 
-  const Test2 = posts.map((post) => {
-    console.log("Post ID:", post.id);
-    console.log("Post Images test 2:", post.images);
-    return post.images;
-  });
-
+  
   return (
     <div className="min-h-[80vh] max-w-6xl mx-auto p-5 flex flex-col mt-24">
       <div className="flex justify-between items-center mb-8">
