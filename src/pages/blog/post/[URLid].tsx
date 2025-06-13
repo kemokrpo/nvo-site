@@ -126,9 +126,9 @@ useEffect(() => {
 }, [URLid]);
 
 
-  const buildCommentsTree = (flatComments) => {
-  const map = new Map();
-  const roots = [];
+  const buildCommentsTree = (flatComments: CommentType[]) => {
+  const map = new Map<string, CommentType>();
+  const roots: CommentType[] = [];
 
   flatComments.forEach((c) => {
     c.replies = [];
@@ -146,6 +146,7 @@ useEffect(() => {
 
   return roots;
 };
+
 
 const toggleReplies = (commentId) => {
   setHiddenReplies((prev) => ({
