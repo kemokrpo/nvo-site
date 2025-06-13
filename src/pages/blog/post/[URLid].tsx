@@ -102,7 +102,13 @@ useEffect(() => {
         sort: "created",
         expand: "author",
       });
-
+      const commentsData: CommentType[] = commentRecords.map(record => ({
+  id: record.id,
+  parent: record.parentId,  // adjust keys as needed
+  content: record.content,
+  replies: [],
+  // ...other fields from CommentType
+}));
       const commentsWithReplies = buildCommentsTree(commentRecords);
       setComments(commentsWithReplies);
     } catch (err) {
