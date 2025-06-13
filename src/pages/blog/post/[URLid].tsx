@@ -189,8 +189,16 @@ async function postComment() {
       expand: "author",
     });
 
-    const updatedComments = buildCommentsTree(commentRecords);
-    setComments(updatedComments);
+    const commentsData: CommentType[] = commentRecords.map(record => ({
+  id: record.id,
+  parent: record.parentId,
+  content: record.content,
+  replies: [],
+}));
+
+const updatedComments = buildCommentsTree(commentsData);
+setComments(updatedComments);
+
   } catch (err) {
     alert("Failed to post comment");
   }
@@ -203,12 +211,10 @@ async function postComment() {
     <div key={comment.id} className="pl-4 border-l-2 border-gray-300 mb-4">
       <div className="flex justify-between items-center mb-1">
         <span className="text-sm font-semibold">
-  <a
-    href={`/user/${comment.expand.author?.username}`}
-    className="text-blue-600 hover:underline"
-  >
-    {comment.expand.author?.username || "Unknown"}
-  </a>
+  <a href={`/user/${comment.expand.author?.username}`} className="text-blue-600 hover:underline">
+  {comment.expand.author?.username || "Unknown"}
+</a>
+
 </span>
 
         {comment.replies.length > 0 && (
