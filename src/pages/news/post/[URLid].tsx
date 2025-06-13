@@ -2,22 +2,40 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import PocketBase from "pocketbase";
 import SlickSlider from "@/components/SlickSlider/SlickSlider";
+import { RecordModel } from "pocketbase";
 
 const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "http://127.0.0.1:8090");
+
+type CommentType = {
+  id: string;
+  content: string;
+  parent?: string | null;
+  replies: CommentType[];
+  expand?: {
+    author?: {
+      username?: string;
+    };
+  };
+};
 
 const NewsPostPage = () => {
   const router = useRouter();
   const { URLid } = router.query;
 
-  const [post, setPost] = useState(null);
-  const [author, setAuthor] = useState(null);
-  const [comments, setComments] = useState([]);
+  const [post, setPost] = useState<null | RecordModel>(null);
+  const [author, setAuthor] = useState<null | (RecordModel & {
+    username: string;
+    name?: string;
+    avatar?: string;
+  })>(null);
+
+  const [comments, setComments] = useState<CommentType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+
   const [newComment, setNewComment] = useState("");
-  const [replyTo, setReplyTo] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hiddenReplies, setHiddenReplies] = useState({});
+  const [replyTo, setReplyTo] = useState<string | null>(null);
+  const [hiddenReplies, setHiddenReplies] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!URLid || typeof URLid !== "string") return;
@@ -51,12 +69,24 @@ const NewsPostPage = () => {
           const fetchedAuthor = await pb.collection("users").getOne(fetchedPost.author, {
             fields: "id,username,name,avatar"
           });
-          setAuthor(fetchedAuthor);
+
+          setAuthor({
+            id: fetchedAuthor.id,
+            username: fetchedAuthor.username,
+            name: fetchedAuthor.name,
+            avatar: fetchedAuthor.avatar,
+            collectionId: fetchedAuthor.collectionId || "users",
+            collectionName: fetchedAuthor.collectionName || "users",
+          });
         } catch (err) {
           console.log("Couldn't fetch author details, using minimal info");
           setAuthor({
             id: fetchedPost.author,
             username: "Anonymous",
+            name: "Anonymous",
+            avatar: "",
+            collectionId: "",
+            collectionName: "",
           });
         }
 
@@ -66,8 +96,17 @@ const NewsPostPage = () => {
           expand: "author",
         });
 
-        const commentsWithReplies = buildCommentsTree(commentRecords);
+        const commentsData: CommentType[] = commentRecords.map(record => ({
+          id: record.id,
+          parent: (record as any).parentId || null,
+          content: record.content,
+          replies: [],
+          expand: record.expand,
+        }));
+
+        const commentsWithReplies = buildCommentsTree(commentsData);
         setComments(commentsWithReplies);
+
       } catch (err) {
         if (isMounted) {
           setError("Failed to load news post");
@@ -88,16 +127,16 @@ const NewsPostPage = () => {
     };
   }, [URLid]);
 
-  const buildCommentsTree = (flatComments) => {
-    const map = new Map();
-    const roots = [];
+  const buildCommentsTree = (flatComments: CommentType[]) => {
+    const map = new Map<string, CommentType>();
+    const roots: CommentType[] = [];
 
-    flatComments.forEach((c) => {
+    flatComments.forEach(c => {
       c.replies = [];
       map.set(c.id, c);
     });
 
-    flatComments.forEach((c) => {
+    flatComments.forEach(c => {
       if (c.parent) {
         const parent = map.get(c.parent);
         if (parent) parent.replies.push(c);
@@ -109,8 +148,8 @@ const NewsPostPage = () => {
     return roots;
   };
 
-  const toggleReplies = (commentId) => {
-    setHiddenReplies((prev) => ({
+  const toggleReplies = (commentId: string) => {
+    setHiddenReplies(prev => ({
       ...prev,
       [commentId]: !prev[commentId],
     }));
@@ -144,26 +183,34 @@ const NewsPostPage = () => {
         expand: "author",
       });
 
-      const updatedComments = buildCommentsTree(commentRecords);
+      const commentsData: CommentType[] = commentRecords.map(record => ({
+        id: record.id,
+        parent: (record as any).parentId || null,
+        content: record.content,
+        replies: [],
+        expand: record.expand,
+      }));
+
+      const updatedComments = buildCommentsTree(commentsData);
       setComments(updatedComments);
+
     } catch (err) {
       alert("Failed to post comment");
     }
   }
 
-  const renderComments = (commentsList) => {
-    return commentsList.map((comment) => (
+  const renderComments = (commentsList: CommentType[]) => {
+    return commentsList.map(comment => (
       <div key={comment.id} className="pl-4 border-l-2 border-gray-300 mb-4">
         <div className="flex justify-between items-center mb-1">
           <span className="text-sm font-semibold">
             <a
-              href={`/user/${comment.expand.author?.username}`}
+              href={`/user/${comment.expand?.author?.username || "#"}`}
               className="text-blue-600 hover:underline"
             >
-              {comment.expand.author?.username || "Unknown"}
+              {comment.expand?.author?.username || "Unknown"}
             </a>
           </span>
-
           {comment.replies.length > 0 && (
             <button
               className="text-xs text-blue-600 hover:underline"
@@ -173,22 +220,20 @@ const NewsPostPage = () => {
             </button>
           )}
         </div>
-        
-        <div className="mb-2 whitespace-pre-wrap">{comment.content}</div> 
+        <div className="mb-2 whitespace-pre-wrap">{comment.content}</div>
         <button
           className="text-xs text-blue-600 hover:underline mb-2"
           onClick={() => setReplyTo(comment.id)}
         >
           Reply
         </button>
-
         {replyTo === comment.id && (
           <div className="mb-4">
             <textarea
               rows={3}
               className="w-full p-2 border rounded"
               value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
+              onChange={e => setNewComment(e.target.value)}
               placeholder="Write your reply..."
             />
             <button
@@ -208,11 +253,8 @@ const NewsPostPage = () => {
             </button>
           </div>
         )}
-
         {comment.replies.length > 0 && !hiddenReplies[comment.id] && (
-          <div className="mt-2">
-            {renderComments(comment.replies)}
-          </div>
+          <div className="mt-2">{renderComments(comment.replies)}</div>
         )}
       </div>
     ));
@@ -227,13 +269,9 @@ const NewsPostPage = () => {
       <div className="mb-4 border-b pb-2">
         <h1 className="text-3xl font-bold">{post.title}</h1>
         <p className="text-sm text-gray-600">Created: {new Date(post.created).toLocaleDateString()}</p>
-        {post.scheduledPublish && (
-          <p className="text-sm text-gray-600">
-            Published: {new Date(post.scheduledPublish).toLocaleDateString()}
-          </p>
-        )}
         <p className="text-sm text-gray-600">
-          Author: <a
+          Author:{" "}
+          <a
             href={`/user/${author?.username}`}
             className="text-blue-600 hover:underline"
           >
@@ -242,39 +280,48 @@ const NewsPostPage = () => {
         </p>
       </div>
 
-      <div className="prose max-w-none mb-6 break-words whitespace-pre-wrap overflow-hidden">
-        {typeof post.content === "string" ? <p>{post.content}</p> : <>{post.content.body}</>}
+      <div className="prose max-w-none mb-6 break-words whitespace-pre-wrap">
+        {post.content}
       </div>
 
-      {post.images?.length > 0 && (
-        <div className="mt-6">
-          <SlickSlider
-            images={post.images.map((img) => pb.files.getURL(post, img))}
-            options={{ showArrows: true, showDots: true }}
-          />
-        </div>
+      {/* Slider if you want to show gallery (like blog) */}
+      {post.gallery && Array.isArray(post.gallery) && post.gallery.length > 0 && (
+        <SlickSlider images={post.gallery} />
       )}
 
       <div className="mt-10">
-        <h2 className="text-2xl font-semibold mb-4">Comments</h2>
-        {!replyTo && (
-          <div className="mb-6">
-            <textarea
-              rows={4}
-              className="w-full p-2 border rounded"
-              placeholder="Write a comment..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-            />
-            <button
-              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              onClick={postComment}
-            >
-              Post Comment
-            </button>
-          </div>
-        )}
+        <h2 className="text-xl font-semibold mb-4">Comments</h2>
+
         {renderComments(comments)}
+
+        <div className="mt-6">
+          <textarea
+            rows={4}
+            className="w-full p-2 border rounded"
+            placeholder="Write a comment..."
+            value={replyTo ? newComment : newComment}
+            onChange={e => setNewComment(e.target.value)}
+          />
+
+          <button
+            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            onClick={postComment}
+          >
+            Post Comment
+          </button>
+
+          {replyTo && (
+            <button
+              className="ml-3 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+              onClick={() => {
+                setReplyTo(null);
+                setNewComment("");
+              }}
+            >
+              Cancel Reply
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
