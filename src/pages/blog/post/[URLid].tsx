@@ -40,6 +40,8 @@ const fetchData = async () => {
     if (!isMounted) return;
 
     if (records.length === 0) {
+      const [error, setError] = useState<null | string>(null);
+
       setError("Post not found");
       setPost(null);
       setAuthor(null);
