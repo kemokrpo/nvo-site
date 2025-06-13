@@ -38,7 +38,8 @@ const [error, setError] = useState<string | null>(null);
 const [newComment, setNewComment] = useState("");
 const [replyTo, setReplyTo] = useState(null);
 const [isSubmitting, setIsSubmitting] = useState(false);
-const [hiddenReplies, setHiddenReplies] = useState({});
+const [hiddenReplies, setHiddenReplies] = useState<Record<string, boolean>>({});
+
 
 
   // Fetch post and comments
