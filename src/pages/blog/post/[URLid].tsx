@@ -108,34 +108,33 @@ useEffect(() => {
 
 
   const buildCommentsTree = (flatComments) => {
-    const map = new Map();
-    const roots = [];
+  const map = new Map();
+  const roots = [];
 
-    flatComments.forEach((c) => {
-      c.replies = [];
-      map.set(c.id, c);
-    });
+  flatComments.forEach((c) => {
+    c.replies = [];
+    map.set(c.id, c);
+  });
 
-    flatComments.forEach((c) => {
-      if (c.parent) {
-        const parent = map.get(c.parent);
-        if (parent) parent.replies.push(c);
-      } else {
-        roots.push(c);
-      }
-    });
+  flatComments.forEach((c) => {
+    if (c.parent) {
+      const parent = map.get(c.parent);
+      if (parent) parent.replies.push(c);
+    } else {
+      roots.push(c);
+    }
+  });
 
-    return roots;
-  };
+  return roots;
+};
 
-  const toggleReplies = (commentId) => {
-    setHiddenReplies((prev) => ({
-      ...prev,
-      [commentId]: !prev[commentId],
-    }));
-  };
+const toggleReplies = (commentId) => {
+  setHiddenReplies((prev) => ({
+    ...prev,
+    [commentId]: !prev[commentId],
+  }));
+};
 
-  // Post a new comment or reply
 async function postComment() {
   if (!newComment.trim()) return;
 
@@ -155,12 +154,10 @@ async function postComment() {
 
     await pb.collection("comments").create(data);
 
-    // Clear inputs
     setNewComment("");
     setReplyTo(null);
 
-    // Refetch comments to update UI with backend data
-    const commentRecords = await pb.collection("comments").getFullList<Comment>({
+    const commentRecords = await pb.collection("comments").getFullList({
       filter: `post = "${post!.id}"`,
       sort: "created",
       expand: "author",
@@ -172,6 +169,7 @@ async function postComment() {
     alert("Failed to post comment");
   }
 }
+
 
 
   const renderComments = (commentsList) => {
