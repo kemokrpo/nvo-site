@@ -215,23 +215,18 @@ setComments(updatedComments);
 
 
 
-  const renderComments = (commentsList) => {
+ const renderComments = (commentsList: CommentType[]) => {
   return commentsList.map((comment) => (
     <div key={comment.id} className="pl-4 border-l-2 border-gray-300 mb-4">
       <div className="flex justify-between items-center mb-1">
         <span className="text-sm font-semibold">
-  <span className="text-sm font-semibold">
-  <a 
-    href={`/user/${comment.expand?.author?.username || "#"}`} 
-    className="text-blue-600 hover:underline"
-  >
-    {comment.expand?.author?.username || "Unknown"}
-  </a>
-</span>
-
-
-</span>
-
+          <a
+            href={`/user/${comment.expand?.author?.username || "#"}`}
+            className="text-blue-600 hover:underline"
+          >
+            {comment.expand?.author?.username || "Unknown"}
+          </a>
+        </span>
         {comment.replies.length > 0 && (
           <button
             className="text-xs text-blue-600 hover:underline"
@@ -241,15 +236,13 @@ setComments(updatedComments);
           </button>
         )}
       </div>
-      
-      <div className="mb-2 whitespace-pre-wrap">{comment.content}</div> 
+      <div className="mb-2 whitespace-pre-wrap">{comment.content}</div>
       <button
         className="text-xs text-blue-600 hover:underline mb-2"
         onClick={() => setReplyTo(comment.id)}
       >
         Reply
       </button>
-
       {replyTo === comment.id && (
         <div className="mb-4">
           <textarea
@@ -276,11 +269,8 @@ setComments(updatedComments);
           </button>
         </div>
       )}
-
       {comment.replies.length > 0 && !hiddenReplies[comment.id] && (
-        <div className="mt-2">
-          {renderComments(comment.replies)}
-        </div>
+        <div className="mt-2">{renderComments(comment.replies)}</div>
       )}
     </div>
   ));
