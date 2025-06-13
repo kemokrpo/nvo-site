@@ -74,9 +74,14 @@ useEffect(() => {
       } catch (err) {
         console.log("Couldn't fetch author details, using minimal info");
         setAuthor({
-          id: fetchedPost.author,
-          username: "Anonymous",
-        });
+  id: fetchedPost.author,
+  username: "Anonymous",
+  name: "Anonymous",
+  avatar: "",         // or default avatar URL
+  collectionId: "",   // or some default string
+  collectionName: "", // or some default string
+});
+
       }
 
       const commentRecords = await pb.collection("comments").getFullList({
