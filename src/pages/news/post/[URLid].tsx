@@ -4,6 +4,7 @@ import PocketBase from "pocketbase";
 import SlickSlider from "@/components/SlickSlider/SlickSlider";
 import { RecordModel } from "pocketbase";
 
+
 const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "http://127.0.0.1:8090");
 
 
@@ -40,76 +41,103 @@ const NewsPostPage = () => {
   const [hiddenReplies, setHiddenReplies] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    if (!URLid || typeof URLid !== "string") return;
+  if (!URLid || typeof URLid !== "string") return;
 
-    const fetchPostData = async () => {
-      try {
-        setLoading(true);
+  let isMounted = true;
 
-        const nowISOString = new Date().toISOString();
-        const records = await pb.collection("posts").getFullList({
-          filter: `uid = "${URLid}" && postType = "news" && (isPublished = true || (scheduledPublish <= "${nowISOString}" && scheduledPublish != ""))`,
-          limit: 1,
-        });
-
-        if (records.length === 0) {
-          throw new Error("Post not found or not published.");
+  const fetchPostData = async () => {
+    try {
+      setLoading(true);
+      
+      // Current UTC time as ISO string
+      const now = new Date().toISOString();
+      
+      // Filter posts that are published and scheduledPublish <= now
+      const records = await pb.collection("posts").getFullList({
+        filter: `uid = "${URLid}" && postType = "news"`,
+        limit: 1,
+      });
+      
+      if (!isMounted) return;
+      
+      if (records.length === 0) {
+        console.log("No valid post found for URLid:", URLid);
+        router.push("/news");
+        return;
+      }
+      
+      const fetchedPost = records[0];
+      if (fetchedPost.scheduledPublish) {
+        const scheduledDate = new Date(fetchedPost.scheduledPublish.replace(" ", "T"));
+        if (new Date(scheduledDate) > new Date(now)) {
+          console.log("Post is scheduled for future publication:", fetchedPost.scheduledPublish);
+          router.push("/news");
+          return;
         }
-
-        const fetchedPost = records[0];
+      }
+      
+      if (isMounted) {
         setPost(fetchedPost);
-
+        
+        // Fetch author with fallback
         try {
           const fetchedAuthor = await pb.collection("users").getOne(fetchedPost.author, {
-  fields: "id,username,name,avatar",
-}) as RecordModel & { username: string; name: string; avatar: string };
-setAuthor(fetchedAuthor);
-
+            fields: "id,username,name,avatar",
+          });
+          setAuthor({
+            id: fetchedAuthor.id,
+            username: fetchedAuthor.username,
+            name: fetchedAuthor.name,
+            avatar: fetchedAuthor.avatar,
+            collectionId: fetchedAuthor.collectionId || "users",
+            collectionName: fetchedAuthor.collectionName || "users",
+          });
         } catch {
           setAuthor({
-  id: fetchedPost.author,
-  collectionId: "",      // add this
-  collectionName: "",    // and this
-  username: "Anonymous",
-  name: "Anonymous",
-  avatar: "/path/to/default/avatar.png",
-});
-
+            id: fetchedPost.author,
+            username: "Anonymous",
+            name: "Anonymous",
+            avatar: "",
+            collectionId: "",
+            collectionName: "",
+          });
         }
-
+        
+        // Fetch comments for this post
         const commentRecords = await pb.collection("comments").getFullList({
           filter: `post = "${fetchedPost.id}"`,
-          sort: "created",
+          sort: "path", // Changed from "created" to match blog component
           expand: "author",
         });
-
+        
         const transformedComments = commentRecords.map((record) => ({
           id: record.id,
-          content: record.content || "",
+          content: record.content,
           parent: record.parent || null,
+          path: record.path,
           replies: [],
-          expand: {
-            author: record.expand?.author
-              ? { username: record.expand.author.username }
-              : undefined,
-          },
+          expand: record.expand,
         }));
-
+        
         setComments(buildCommentsTree(transformedComments));
-      } catch (err) {
-  if (err instanceof Error) {
-    setError(err.message);
-  } else {
-    setError(String(err));
-  }
-}
- finally {
-        setLoading(false);
       }
-    };
+    } catch (err) {
+      if (isMounted) {
+        setError(err instanceof Error ? err.message : String(err));
+      }
+    } finally {
+      if (isMounted) setLoading(false);
+    }
+  };
 
-    fetchPostData();
-  }, [URLid]);
+  fetchPostData();
+
+  return () => {
+    isMounted = false;
+  };
+}, [URLid]);
+
+
 
   const buildCommentsTree = (flatComments: CommentType[]): CommentType[] => {
     const map = new Map();

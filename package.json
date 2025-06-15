@@ -16,6 +16,7 @@
     "axios": "^1.8.3",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.513.0",
+    "luxon": "^3.6.1",
     "moment": "^2.29.4",
     "next": "13.2.4",
     "pocketbase": "^0.26.0",

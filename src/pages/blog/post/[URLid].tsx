@@ -44,13 +44,14 @@ const BlogPostPage = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-
+        console.log("Fetching blog posts:", await pb.collection("posts").getFullList({filter: `postType = "blog"`}));
+        console.log("Fetching news posts:", await pb.collection("posts").getFullList({filter: `postType = "news"`}));
         // Fetch post
         const records = await pb.collection("posts").getFullList({
           filter: `uid = "${URLid}" && postType = "blog" && isPublished = true`,
           limit: 1,
         });
-
+        console.log("Fetched records:", records);
         if (!isMounted) return;
 
         if (records.length === 0) {
@@ -58,6 +59,7 @@ const BlogPostPage = () => {
           setPost(null);
           setAuthor(null);
           setComments([]);
+          router.push("/blog");
           return;
         }
 
