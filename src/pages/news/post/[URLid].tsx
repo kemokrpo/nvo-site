@@ -6,30 +6,32 @@ import { RecordModel } from "pocketbase";
 
 const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "http://127.0.0.1:8090");
 
+
+type CommentType = {
+  id: string;
+  content: string;
+  parent?: string | null;
+  path?: string;
+  replies: CommentType[];
+  expand?: {
+    author?: {
+      username?: string;
+    };
+  };
+};
+
 const NewsPostPage = () => {
   const router = useRouter();
   const { URLid } = router.query;
 
-  const [post, setPost] = useState<null | RecordModel>(null);
-  const [author, setAuthor] = useState<null | (RecordModel & { 
-    username: string; 
-    name: string; 
-    avatar: string 
-  })>(null);
+  const [post, setPost] = useState<RecordModel | null>(null);
 
-  type CommentType = {
-    id: string;
-    content: string;
-    parent?: string | null;
-    replies: CommentType[];
-    expand?: {
-      author?: {
-        username?: string;
-      };
-    };
-  };
-
-  const [comments, setComments] = useState<CommentType[]>([]);
+  const [author, setAuthor] = useState<null | (RecordModel & {
+      username: string;
+      name: string;
+      avatar: string;
+    })>(null);
+    const [comments, setComments] = useState<CommentType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [newComment, setNewComment] = useState("");
@@ -40,26 +42,18 @@ const NewsPostPage = () => {
   useEffect(() => {
     if (!URLid || typeof URLid !== "string") return;
 
-    let isMounted = true;
-    const abortController = new AbortController();
-
-    const fetchData = async () => {
-      setLoading(true);
+    const fetchPostData = async () => {
       try {
-        const now = new Date().toISOString();
+        setLoading(true);
+
+        const nowISOString = new Date().toISOString();
         const records = await pb.collection("posts").getFullList({
-          filter: uid = "${URLid}" && postType = "news" && (isPublished = true || (scheduledPublish <= "${now}" && scheduledPublish != "")),
+          filter: `uid = "${URLid}" && postType = "news" && (isPublished = true || (scheduledPublish <= "${nowISOString}" && scheduledPublish != ""))`,
           limit: 1,
         });
 
-        if (!isMounted) return;
-
         if (records.length === 0) {
-          setError("News post not found or not yet published");
-          setPost(null);
-          setAuthor(null);
-          setComments([]);
-          return;
+          throw new Error("Post not found or not published.");
         }
 
         const fetchedPost = records[0];
@@ -67,68 +61,58 @@ const NewsPostPage = () => {
 
         try {
           const fetchedAuthor = await pb.collection("users").getOne(fetchedPost.author, {
-            fields: "id,username,name,avatar"
-          });
+  fields: "id,username,name,avatar",
+}) as RecordModel & { username: string; name: string; avatar: string };
+setAuthor(fetchedAuthor);
 
-          const mappedAuthor = {
-            id: fetchedAuthor.id,
-            username: fetchedAuthor.username,
-            name: fetchedAuthor.name,
-            avatar: fetchedAuthor.avatar,
-            collectionId: fetchedAuthor.collectionId || "users",
-            collectionName: fetchedAuthor.collectionName || "users",
-          };
-          setAuthor(mappedAuthor);
-        } catch (err) {
-          console.log("Couldn't fetch author details, using minimal info");
+        } catch {
           setAuthor({
-            id: fetchedPost.author,
-            username: "Anonymous",
-            name: "Anonymous",
-            avatar: "",
-            collectionId: "",
-            collectionName: "",
-          });
+  id: fetchedPost.author,
+  collectionId: "",      // add this
+  collectionName: "",    // and this
+  username: "Anonymous",
+  name: "Anonymous",
+  avatar: "/path/to/default/avatar.png",
+});
+
         }
 
         const commentRecords = await pb.collection("comments").getFullList({
-          filter: post = "${fetchedPost.id}",
+          filter: `post = "${fetchedPost.id}"`,
           sort: "created",
           expand: "author",
         });
 
-        const commentsData: CommentType[] = commentRecords.map(record => ({
+        const transformedComments = commentRecords.map((record) => ({
           id: record.id,
-          parent: record.parent,
-          content: record.content,
+          content: record.content || "",
+          parent: record.parent || null,
           replies: [],
-          expand: record.expand,
+          expand: {
+            author: record.expand?.author
+              ? { username: record.expand.author.username }
+              : undefined,
+          },
         }));
 
-        const commentsWithReplies = buildCommentsTree(commentsData);
-        setComments(commentsWithReplies);
+        setComments(buildCommentsTree(transformedComments));
       } catch (err) {
-        if (isMounted) {
-          setError("Failed to load news post");
-          setPost(null);
-          setAuthor(null);
-          setComments([]);
-        }
-      } finally {
-        if (isMounted) setLoading(false);
+  if (err instanceof Error) {
+    setError(err.message);
+  } else {
+    setError(String(err));
+  }
+}
+ finally {
+        setLoading(false);
       }
     };
 
-    fetchData();
-
-    return () => {
-      isMounted = false;
-      abortController.abort();
-    };
+    fetchPostData();
   }, [URLid]);
 
-  const buildCommentsTree = (flatComments: CommentType[]) => {
-    const map = new Map<string, CommentType>();
+  const buildCommentsTree = (flatComments: CommentType[]): CommentType[] => {
+    const map = new Map();
     const roots: CommentType[] = [];
 
     flatComments.forEach((c) => {
@@ -155,62 +139,67 @@ const NewsPostPage = () => {
     }));
   };
 
-  async function postComment() {
-    if (!newComment.trim()) return;
+  const postComment = async () => {
+    if (!newComment.trim() || isSubmitting) return;
 
+    const currentUser = pb.authStore.model;
+    if (!currentUser) {
+      alert("Please log in to comment");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
-      const currentUser = pb.authStore.model;
-      if (!currentUser) {
-        alert("Please log in to comment");
-        return;
-      }
-
       const data = {
         content: newComment.trim(),
         author: currentUser.id,
-        post: post!.id,
+        post: post?.id,
         parent: replyTo,
       };
 
       await pb.collection("comments").create(data);
 
-      setNewComment("");
-      setReplyTo(null);
-
       const commentRecords = await pb.collection("comments").getFullList({
-        filter: post = "${post!.id}",
+        filter: `post = "${post?.id}"`,
         sort: "created",
         expand: "author",
       });
 
-      const commentsData: CommentType[] = commentRecords.map(record => ({
+      const transformedComments = commentRecords.map((record) => ({
         id: record.id,
-        parent: record.parent,
-        content: record.content,
+        content: record.content || "",
+        parent: record.parent || null,
+        path: record.path || "",
         replies: [],
-        expand: record.expand,
+        expand: {
+          author: record.expand?.author
+            ? { username: record.expand.author.username }
+            : undefined,
+        },
       }));
 
-      const updatedComments = buildCommentsTree(commentsData);
-      setComments(updatedComments);
-    } catch (err) {
+      setComments(buildCommentsTree(transformedComments));
+      setNewComment("");
+      setReplyTo(null);
+    } catch {
       alert("Failed to post comment");
+    } finally {
+      setIsSubmitting(false);
     }
-  }
+  };
 
-  const renderComments = (commentsList: CommentType[]) => {
-    return commentsList.map((comment) => (
+  const renderComments = (commentsList: CommentType[]) =>
+    commentsList.map((comment) => (
       <div key={comment.id} className="pl-4 border-l-2 border-gray-300 mb-4">
         <div className="flex justify-between items-center mb-1">
           <span className="text-sm font-semibold">
             <a
-              href={`/user/${comment.expand?.author?.username || "#"}`}
+              href={`/user/${comment.expand?.author?.username || "unknown"}`}
               className="text-blue-600 hover:underline"
             >
               {comment.expand?.author?.username || "Unknown"}
             </a>
           </span>
-
           {comment.replies.length > 0 && (
             <button
               className="text-xs text-blue-600 hover:underline"
@@ -220,15 +209,13 @@ const NewsPostPage = () => {
             </button>
           )}
         </div>
-        
-        <div className="mb-2 whitespace-pre-wrap">{comment.content}</div> 
+        <div className="mb-2 whitespace-pre-wrap">{comment.content}</div>
         <button
           className="text-xs text-blue-600 hover:underline mb-2"
           onClick={() => setReplyTo(comment.id)}
         >
           Reply
         </button>
-
         {replyTo === comment.id && (
           <div className="mb-4">
             <textarea
@@ -239,10 +226,11 @@ const NewsPostPage = () => {
               placeholder="Write your reply..."
             />
             <button
-              className="mt-1 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+              disabled={isSubmitting}
+              className="mt-1 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
               onClick={postComment}
             >
-              Post Reply
+              {isSubmitting ? "Posting..." : "Post Reply"}
             </button>
             <button
               className="ml-2 px-3 py-1 bg-gray-400 text-white rounded hover:bg-gray-500"
@@ -255,15 +243,11 @@ const NewsPostPage = () => {
             </button>
           </div>
         )}
-
         {comment.replies.length > 0 && !hiddenReplies[comment.id] && (
-          <div className="mt-2">
-            {renderComments(comment.replies)}
-          </div>
+          <div className="mt-2">{renderComments(comment.replies)}</div>
         )}
       </div>
     ));
-  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -273,15 +257,18 @@ const NewsPostPage = () => {
     <div className="min-h-[80vh] max-w-4xl mx-auto p-5 flex flex-col mt-24 bg-white shadow-lg rounded-lg">
       <div className="mb-4 border-b pb-2">
         <h1 className="text-3xl font-bold">{post.title}</h1>
-        <p className="text-sm text-gray-600">Created: {new Date(post.created).toLocaleDateString()}</p>
+        <p className="text-sm text-gray-600">
+          Created: {new Date(post.created).toLocaleDateString()}
+        </p>
         {post.scheduledPublish && (
           <p className="text-sm text-gray-600">
             Published: {new Date(post.scheduledPublish).toLocaleDateString()}
           </p>
         )}
         <p className="text-sm text-gray-600">
-          Author: <a
-            href={`/user/${author?.username}`}
+          Author:{" "}
+          <a
+            href={`/user/${author?.username || "unknown"}`}
             className="text-blue-600 hover:underline"
           >
             {author?.username || "Unknown"}
@@ -290,7 +277,11 @@ const NewsPostPage = () => {
       </div>
 
       <div className="prose max-w-none mb-6 break-words whitespace-pre-wrap overflow-hidden">
-        {typeof post.content === "string" ? <p>{post.content}</p> : <>{post.content.body}</>}
+        {typeof post.content === "string" ? (
+          <p>{post.content}</p>
+        ) : (
+          <>{post.content?.body || ""}</>
+        )}
       </div>
 
       {post.images?.length > 0 && (
@@ -314,10 +305,11 @@ const NewsPostPage = () => {
               onChange={(e) => setNewComment(e.target.value)}
             />
             <button
-              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              disabled={isSubmitting}
+              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
               onClick={postComment}
             >
-              Post Comment
+              {isSubmitting ? "Posting..." : "Post Comment"}
             </button>
           </div>
         )}

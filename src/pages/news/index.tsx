@@ -25,51 +25,56 @@ const NewsIndexPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let isMounted = true;
-    const abortController = new AbortController();
+  let isMounted = true;
+  const abortController = new AbortController();
 
-    const fetchPosts = debounce(async () => {
-      try {
-        const now = new Date().toISOString();
-        const result = await pb.collection("posts").getFullList<Post>({
-          filter: `postType = "news" && (isPublished = true || (scheduledPublish != "" && scheduledPublish <= "${now}"))`,
-          sort: "-created",
-          signal: abortController.signal,
+  const fetchPosts = debounce(async () => {
+    try {
+      const now = new Date().toISOString(); // Current timestamp
+      const result = await pb.collection("posts").getFullList<Post>({
+        filter: `postType = "news" && (isPublished = true || scheduledPublish != "")`,
+        sort: "-created",
+        signal: abortController.signal,
+      });
+
+      if (isMounted) {
+        const validPosts = result.filter((post) => {
+          const scheduledTime = post.scheduledPublish?.replace(" ", "T");
+          return post.isPublished || (scheduledTime && new Date(scheduledTime) <= new Date(now));
         });
-        if (isMounted) {
-          const postsWithImages = result.map((post) => {
-            let images: string[] = [];
-            // Fetch images if available in the post
-            if ("images" in post && Array.isArray(post.images)) {
-              images = post.images;
-            }
-            return { ...post, images };
-          });
-          setPosts(postsWithImages);
-        }
-      } catch (error: unknown) {
-  if (error instanceof Error) {
-    if (error.name !== "AbortError") {
-      console.error("Failed to load news posts", error);
-    }
-  } else {
-    // handle non-Error type, if needed
-    console.error("Failed to load news posts", error);
-  }
-}
-finally {
-        if (isMounted) setLoading(false);
+
+        const postsWithImages = validPosts.map((post) => {
+          let images: string[] = [];
+          if ("images" in post && Array.isArray(post.images)) {
+            images = post.images;
+          }
+          return { ...post, images };
+        });
+
+        setPosts(postsWithImages);
       }
-    }, 200);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.name !== "AbortError") {
+          console.error("Failed to load news posts", error);
+        }
+      } else {
+        console.error("Failed to load news posts", error);
+      }
+    } finally {
+      if (isMounted) setLoading(false);
+    }
+  }, 200);
 
-    fetchPosts();
+  fetchPosts();
 
-    return () => {
-      isMounted = false;
-      abortController.abort();
-      fetchPosts.cancel();
-    };
-  }, []);
+  return () => {
+    isMounted = false;
+    abortController.abort();
+    fetchPosts.cancel();
+  };
+}, []);
+
 
   function debounce(func: Function, wait: number) {
     let timeout: NodeJS.Timeout;

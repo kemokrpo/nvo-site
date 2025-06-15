@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import PocketBase from "pocketbase";
+import type { RecordModel } from "pocketbase";
 
 const UserPage = () => {
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState<RecordModel | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { username } = router.query;
 

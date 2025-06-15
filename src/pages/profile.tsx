@@ -3,15 +3,29 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import PocketBase from "pocketbase";
 import { useAuth } from "@/context/AuthContext";
+import { RecordModel } from "pocketbase";
 
 import IntlTelInput from "react-intl-tel-input";
 import "react-intl-tel-input/dist/main.css";
+import { CountryData } from "react-intl-tel-input";
+
+
 
 const ProfilePage = () => {
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState<RecordModel | null>(null);
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState({});
-  const [avatarFile, setAvatarFile] = useState(null);
+  type FormData = {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    dateOfBirth?: string;
+    phone?: string;
+    bio?: string;
+    [key: string]: any;
+  };
+  
+  const [formData, setFormData] = useState<FormData>({});
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const router = useRouter();
   const { isLoggedIn, isLoading } = useAuth();
@@ -59,30 +73,40 @@ const ProfilePage = () => {
 
 
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const { name, value } = e.target;
+  setFormData((prev) => ({ ...prev, [name]: value }));
+};
 
-  const handlePhoneChange = (isValid, value, countryData) => {
-    const countryCode = countryData.dialCode;
-    const formattedPhone = value.startsWith(`+${countryCode}`)
-      ? value
-      : `+${countryCode}${value.replace(/\D/g, "")}`;
-    setFormData((prev) => ({ ...prev, phone: formattedPhone }));
-  };
 
-  const handleAvatarChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setAvatarFile(e.target.files[0]);
-    }
-  };
+  const handlePhoneChange = (
+  isValid: boolean,
+  value: string,
+  countryData: CountryData
+) => {
+  const countryCode = countryData.dialCode || "";
+  const formattedPhone = value.startsWith(`+${countryCode}`)
+    ? value
+    : `+${countryCode}${value.replace(/\D/g, "")}`;
+  setFormData((prev) => ({ ...prev, phone: formattedPhone }));
+};
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (e.target.files && e.target.files[0]) {
+    setAvatarFile(e.target.files[0]);
+  }
+};
+
 
   const handleSubmit = async () => {
     try {
+      if (!userData) {
+        console.error("User data is not loaded.");
+        return;
+      }
       const pb = new PocketBase(process.env.NEXT_PUBLIC_PB_URL);
 
-      let avatarUrl = userData?.avatar || null;
+      let avatarUrl = userData.avatar || null;
 
       if (avatarFile) {
         const formDataUpload = new FormData();
