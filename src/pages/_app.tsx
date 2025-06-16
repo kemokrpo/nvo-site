@@ -56,6 +56,27 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
     <Head>
       <title>BEST Mostar</title>
+      <meta name="description" content="Official website of BEST Mostar – student association promoting technology and innovation in Mostar, Bosnia and Herzegovina." />
+  <meta name="keywords" content="BEST Mostar, technology student association, Bosnia, innovation, software engineering" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.best-mostar.org" />
+  <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "BEST Mostar",
+              "url": "https://best-mostar.org",
+              "logo": "https://best-mostar.org/logo.png",
+              "sameAs": [
+                "https://www.facebook.com/BESTMostar/",
+                "https://www.instagram.com/best.mostar/",
+                "https://www.linkedin.com/company/best-mostar/",
+              ]
+            }),
+          }}
+        />
     </Head>
     <UnlockContext.Provider value={{ isUnlocked, setUnlocked }}>
       <LanguageProvider>
