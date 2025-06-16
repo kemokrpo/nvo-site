@@ -44,7 +44,7 @@ const UserPage = () => {
   if (!userData) return <p>No user data available.</p>;
 
   return (
-    <div className="max-w-4xl mx-auto mb-48 p-6 relative">
+    <div className="translate-y-[1rem] max-w-4xl mx-auto mb-48 p-6 relative dark:text-dt-dark dark:bg-dbg-dark text-dt-light min-h-screen">
       <h1 className="text-2xl font-bold mb-4">User Profile</h1>
       <div className="flex justify-between mb-6">
         <div className="flex items-center space-x-4">

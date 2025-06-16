@@ -223,14 +223,14 @@ const NewsPostPage = () => {
           <span className="text-sm font-semibold">
             <a
               href={`/user/${comment.expand?.author?.username || "unknown"}`}
-              className="text-blue-600 hover:underline"
+              className="text-main-700 hover:underline"
             >
               {comment.expand?.author?.username || "Unknown"}
             </a>
           </span>
           {comment.replies.length > 0 && (
             <button
-              className="text-xs text-blue-600 hover:underline"
+              className="text-xs text-main-700 hover:underline"
               onClick={() => toggleReplies(comment.id)}
             >
               {hiddenReplies[comment.id] ? "Show Replies" : "Hide Replies"}
@@ -239,7 +239,7 @@ const NewsPostPage = () => {
         </div>
         <div className="mb-2 whitespace-pre-wrap">{comment.content}</div>
         <button
-          className="text-xs text-blue-600 hover:underline mb-2"
+          className="text-xs text-main-700 hover:underline mb-2"
           onClick={() => setReplyTo(comment.id)}
         >
           Reply
@@ -255,7 +255,7 @@ const NewsPostPage = () => {
             />
             <button
               disabled={isSubmitting}
-              className="mt-1 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              className="mt-1 px-3 py-1 bg-main-700 text-white rounded hover:bg-blue-700 disabled:opacity-50"
               onClick={postComment}
             >
               {isSubmitting ? "Posting..." : "Post Reply"}
@@ -282,7 +282,7 @@ const NewsPostPage = () => {
   if (!post) return <p>News post not found.</p>;
 
   return (
-    <div className="min-h-[80vh] max-w-4xl mx-auto p-5 flex flex-col mt-24 bg-white shadow-lg rounded-lg">
+    <div className="min-h-[80vh] max-w-4xl mx-auto p-5 flex flex-col mt-24 mb-8 bg-gray-300 shadow-lg rounded-lg">
       <div className="mb-4 border-b pb-2">
         <h1 className="text-3xl font-bold">{post.title}</h1>
         <p className="text-sm text-gray-600">
@@ -297,7 +297,7 @@ const NewsPostPage = () => {
           Author:{" "}
           <a
             href={`/user/${author?.username || "unknown"}`}
-            className="text-blue-600 hover:underline"
+            className="text-main-700 hover:underline"
           >
             {author?.username || "Unknown"}
           </a>
@@ -334,7 +334,7 @@ const NewsPostPage = () => {
             />
             <button
               disabled={isSubmitting}
-              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              className="mt-2 px-4 py-2 bg-main-700 text-white rounded hover:bg-blue-700 disabled:opacity-50"
               onClick={postComment}
             >
               {isSubmitting ? "Posting..." : "Post Comment"}

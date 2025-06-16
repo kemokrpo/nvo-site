@@ -22,6 +22,7 @@ const content = {
     LogOut: "Log Out",
     LogIn: "Log In",
     Register: "Register",
+    becomeBestie: "Become BESTie",
   },
   bs: {
     Join: "Pridruzi nam se",
@@ -36,6 +37,7 @@ const content = {
     LogOut: "Odjavi se",
     LogIn: "Prijavi se",
     Register: "Registruj se",
+    becomeBestie: "Postani BESTovac",
   },
 };
 
@@ -142,13 +144,13 @@ const Navbar = () => {
               <>
                 <Link href="/profile" className="hover:underline">{content[language].Me}</Link>
                 <h1 onClick={handleLogout} className="hover:underline cursor-pointer">{content[language].LogOut}</h1>
-                <Link href="/" className="hover:underline">Become BESTie</Link>
+                <Link href="/" className="hover:underline">{content[language].becomeBestie}</Link>
               </>
             ) : (
               <>
                 <Link href="/register" className="hover:underline">{content[language].Register}</Link>
                 <Link href="/login" className="hover:underline">{content[language].LogIn}</Link>
-                <Link href="/" className="hover:underline">Become BESTie</Link>
+                <Link href="/" className="hover:underline">{content[language].becomeBestie}</Link>
               </>
             )}
           </div>
@@ -203,13 +205,13 @@ const Navbar = () => {
                 <>
                   <Link href="/profile" className="hover:underline">{content[language].Me}</Link>
                   <h1 onClick={handleLogout} className="hover:underline">{content[language].LogOut}</h1>
-                  <Link href="/" className="hover:underline">Become BESTie</Link>
+                  <Link href="/" className="hover:underline">{content[language].becomeBestie}</Link>
                 </>
               ) : (
                 <>
                   <Link href="/register" className="hover:underline">{content[language].Register}</Link>
                   <Link href="/login" className="hover:underline">{content[language].LogIn}</Link>
-                  <Link href="/" className="hover:underline">Become BESTie</Link>
+                  <Link href="/" className="hover:underline">{content[language].becomeBestie}</Link>
                 </>
               )}
             </div>

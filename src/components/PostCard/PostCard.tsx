@@ -24,7 +24,7 @@ const PostCard: React.FC<PostCardProps> = ({ id, uid, title, images, linkPrefix 
   return (
     <Link
       href={`${linkPrefix}/post/${uid}`}
-      className="block bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
+      className="block bg-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
     >
       {/* Title */}
       <div className="p-4 text-center bg-main-100">

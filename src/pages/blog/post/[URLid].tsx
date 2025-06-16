@@ -209,14 +209,14 @@ const BlogPostPage = () => {
           <span className="text-sm font-semibold">
             <a
               href={`/user/${comment.expand?.author?.username || "#"}`}
-              className="text-blue-600 hover:underline"
+              className="text-main-700 hover:underline"
             >
               {comment.expand?.author?.username || "Unknown"}
             </a>
           </span>
           {comment.replies.length > 0 && (
             <button
-              className="text-xs text-blue-600 hover:underline"
+              className="text-xs text-main-700 hover:underline"
               onClick={() => toggleBranch(comment.id)}
             >
               {hiddenBranches[comment.id] ? "Show Replies" : "Hide Replies"}
@@ -225,7 +225,7 @@ const BlogPostPage = () => {
         </div>
         <div className="mb-2 whitespace-pre-wrap">{comment.content}</div>
         <button
-          className="text-xs text-blue-600 hover:underline mb-2"
+          className="text-xs text-main-700 hover:underline mb-2"
           onClick={() => setReplyTo(comment.id)}
         >
           Reply
@@ -268,13 +268,13 @@ const BlogPostPage = () => {
   if (!post) return <p>Post not found.</p>;
 
   return (
-    <div className="min-h-[80vh] max-w-4xl mx-auto p-5 flex flex-col mt-24 bg-white shadow-lg rounded-lg">
+    <div className="min-h-[80vh] max-w-4xl mx-auto p-5 flex flex-col mt-24 bg-gray-300 shadow-lg rounded-lg mb-8">
       <div className="mb-4 border-b pb-2">
         <h1 className="text-3xl font-bold">{post.title}</h1>
         <p className="text-sm text-gray-600">Created: {new Date(post.created).toLocaleDateString()}</p>
         <p className="text-sm text-gray-600">
           Author:{" "}
-          <a href={`/user/${author?.username}`} className="text-blue-600 hover:underline">
+          <a href={`/user/${author?.username}`} className="text-main-700 hover:underline">
             {author?.username || "Unknown"}
           </a>
         </p>
@@ -305,7 +305,7 @@ const BlogPostPage = () => {
               onChange={(e) => setNewComment(e.target.value)}
             />
             <button
-              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="mt-2 px-4 py-2 bg-main-700 text-white rounded hover:bg-blue-700"
               onClick={postComment}
             >
               Post Comment

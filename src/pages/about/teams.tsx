@@ -9,8 +9,37 @@ import IconFundraising from "@/components/Icons/IconFundraising";
 import IconMegaphone from "@/components/Icons/IconMegaphone";
 import IconDesign from "@/components/Icons/IconDesign";
 import { useLanguage } from "@/context/LanguageContext";
+import TeamModal from "@/components/Teams/TeamModal"; 
+import { useState } from "react";
 
 
+const teamMembers = {
+  IT: [
+    { name: "Kemo Krpo", imageSrc: "/members/it/kemokrpo.jpg" },
+    { name: "Vedad Keskin", imageSrc: "/default-profile.png" },
+    { name: "Nudžejma Lopo", imageSrc: "/default-profile.png" }
+  ],
+  HR: [
+    { name: "Šejla Grcić", imageSrc: "/default-profile.png" },
+    { name: "Tea Domazet", imageSrc: "/default-profile.png" },
+    { name: "Maja Kovačević", imageSrc: "/default-profile.png" }
+  ],
+  FR: [
+    { name: "Dino Šehić", imageSrc: "/default-profile.png" },
+    { name: "Maja Kovačević", imageSrc: "/default-profile.png" },
+    { name: "Nina Jurišić", imageSrc: "/default-profile.png" }
+  ],
+  PR: [
+    { name: "Šejla Grcić", imageSrc: "/default-profile.png" },
+    { name: "Maja Kovačević", imageSrc: "/default-profile.png" },
+    { name: "Nina Jurišić", imageSrc: "/default-profile.png" }
+  ],
+  DT: [
+    { name: "Dino Šehić", imageSrc: "/default-profile.png" },
+    { name: "Maja Kovačević", imageSrc: "/default-profile.png" },
+    { name: "Nina Jurišić", imageSrc: "/default-profile.png" }
+  ],
+};
 type Content = {
   en: {
     Teams:string;
@@ -75,6 +104,19 @@ const content: Content = {
 
 const Teams: NextPage = () => {
   const { language }: { language: 'en' | 'bs' } = useLanguage();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<keyof typeof teamMembers | null>(null);
+
+  const openModal = (teamKey: keyof typeof teamMembers) => {
+    setSelectedTeam(teamKey);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedTeam(null);
+  };
   return (
     <section className="h-min p-[5rem_5rem]">
       <div className="w-full relative h-[20vh] sm:h-[40vh]">
@@ -107,32 +149,53 @@ const Teams: NextPage = () => {
       </p>
 
       <div className="flex justify-center flex-wrap gap-10 pt-20">
-        <TeamCard
-          icon={<IconLaptop width={64} />}
-          text={content[language].IT}
-          description={content[language].ITD}
-        />
-        <TeamCard
-          icon={<IconHandshake width={64} />}
-          text={content[language].HR}
-          description={content[language].HRD}
-        />
-        <TeamCard
-          icon={<IconFundraising width={64} />}
-          text={content[language].FR}
-          description={content[language].FRD}
-        />
-        <TeamCard
-          icon={<IconMegaphone width={64} />}
-          text={content[language].PR}
-          description={content[language].PRD}
-        />
-        <TeamCard
-          icon={<IconDesign width={64} />}
-          text={content[language].DT}
-          description={content[language].DTD}
-        />
+        <div onClick={() => openModal("IT")} className="cursor-pointer">
+          <TeamCard
+            icon={<IconLaptop width={64} />}
+            text={content[language].IT}
+            description={content[language].ITD}
+          />
+        </div>
+        <div onClick={() => openModal("HR")} className="cursor-pointer">
+          <TeamCard
+            icon={<IconHandshake width={64} />}
+            text={content[language].HR}
+            description={content[language].HRD}
+          />
+        </div>
+        <div onClick={() => openModal("FR")} className="cursor-pointer">
+          <TeamCard
+            icon={<IconFundraising width={64} />}
+            text={content[language].FR}
+            description={content[language].FRD}
+          />
+        </div>
+        <div onClick={() => openModal("PR")} className="cursor-pointer">
+          <TeamCard
+            icon={<IconMegaphone width={64} />}
+            text={content[language].PR}
+            description={content[language].PRD}
+          />
+        </div>
+        <div onClick={() => openModal("DT")} className="cursor-pointer">
+          <TeamCard
+            icon={<IconDesign width={64} />}
+            text={content[language].DT}
+            description={content[language].DTD}
+          />
+        </div>
       </div>
+
+      {/* Modal */}
+      {selectedTeam && (
+        <TeamModal
+          isOpen={modalOpen}
+          onClose={closeModal}
+          title={content[language][selectedTeam]}
+          description={content[language][selectedTeam + "D" as keyof typeof content['en']]}
+          members={teamMembers[selectedTeam]}
+        />
+      )}
     </section>
   );
 };

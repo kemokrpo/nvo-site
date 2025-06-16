@@ -84,7 +84,7 @@ const NewsCreatePage = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-md shadow-md mt-24">
+    <div className="max-w-3xl mx-auto p-6 bg-gray-300 rounded-md shadow-md mt-24 mb-8">
       <h1 className="text-2xl font-bold mb-6 text-center text-main-700">Create News Article</h1>
       {error && <p className="mb-4 text-red-600">{error}</p>}
 

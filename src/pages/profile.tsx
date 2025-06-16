@@ -131,6 +131,7 @@ const ProfilePage = () => {
   if (!isAuthChecked || !userData) return <p>Loading...</p>;
 
   return (
+    <div className=" translate-y-[-1rem] max-w-4xl mx-auto p-6 relative text-dt-light dark:bg-dbg-dark dark:text-dt-dark min-h-screen">
     <div className="max-w-4xl mx-auto p-6 relative">
       <h1 className="text-2xl font-bold mb-4">Profile</h1>
       <div className="flex justify-between mb-6">
@@ -184,7 +185,7 @@ const ProfilePage = () => {
               name={field}
               value={formData[field] || ""}
               onChange={handleChange}
-              className="input border"
+              className="input border text-dt-light"
               onFocus={() => setEditing(true)}
             />
           </div>
@@ -198,7 +199,7 @@ const ProfilePage = () => {
             excludeCountries={["il"]}
             onPhoneNumberChange={(isValid, value, countryData) => handlePhoneChange(isValid, value, countryData)}
             value={formData.phone || ""}
-            inputClassName="w-full border p-2 rounded"
+            inputClassName="w-full border p-2 rounded text-dt-light"
           />
         </div>
         <div className="col-span-2">
@@ -209,7 +210,7 @@ const ProfilePage = () => {
             name="bio"
             value={formData.bio || ""}
             onChange={handleChange}
-            className="textarea w-full h-52 resize-none border"
+            className="textarea w-full h-52 resize-none border text-dt-light"
             onFocus={() => setEditing(true)}
           />
         </div>
@@ -222,6 +223,7 @@ const ProfilePage = () => {
       >
         Apply Changes
       </button>
+    </div>
     </div>
   );
 };

@@ -1,13 +1,34 @@
 import { useEffect, useState } from "react";
 import { useUnlock } from "@/pages/_app";
+import { useLanguage } from "@/context/LanguageContext";
+
+
+type Content = {
+  en: {
+    countdown: string;
+  };
+  bs: {
+    countdown: string;
+  };
+}
+const content: Content = {
+  en: {
+    countdown: "Countdown Timer",
+  },
+  bs: {
+    countdown: "Odbrojavanje",
+  },
+};
+
 
 const Countdown = () => {
+  const { language }: { language: 'en' | 'bs' } = useLanguage();
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [password, setPassword] = useState<string>("");
   const { isUnlocked, setUnlocked } = useUnlock();
 
   useEffect(() => {
-    const countdownEnd = new Date("2025-06-30T12:00:00Z").getTime();
+    const countdownEnd = new Date("2025-07-06T10:00:00Z").getTime();
     const updateRemainingTime = () => {
       const remainingTime = countdownEnd - Date.now();
       setTimeLeft(remainingTime > 0 ? remainingTime : 0);
@@ -57,8 +78,8 @@ const Countdown = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
-      <h1 className="text-5xl font-bold text-main-700 mb-4">Countdown Timer</h1>
+    <div className="flex flex-col items-center justify-center h-screen dark:bg-dbg-dark">
+      <h1 className="text-5xl font-bold text-main-700 mb-4">{content[language].countdown}</h1>
       <p className="text-3xl font-mono text-main-700">{formatTime(timeLeft)}</p>
     </div>
   );
