@@ -28,7 +28,7 @@ const Countdown = () => {
   const { isUnlocked, setUnlocked } = useUnlock();
 
   useEffect(() => {
-    const countdownEnd = new Date("2025-07-06T10:00:00Z").getTime();
+    const countdownEnd = new Date("2025-07-06T12:00:00Z").getTime();
     const updateRemainingTime = () => {
       const remainingTime = countdownEnd - Date.now();
       setTimeLeft(remainingTime > 0 ? remainingTime : 0);
