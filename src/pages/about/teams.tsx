@@ -16,8 +16,8 @@ import { useState } from "react";
 const teamMembers = {
   IT: [
     { name: "Kemo Krpo", imageSrc: "/members/it/kemokrpo.jpg" },
-    { name: "Vedad Keskin", imageSrc: "/members/it/nudzejmalopo.jpg" },
-    { name: "Nudžejma Lopo", imageSrc: "/members/it/vedadkeskin.jpg" }
+    { name: "Vedad Keskin", imageSrc: "/members/it/nudzejmalopo.png" },
+    { name: "Nudžejma Lopo", imageSrc: "/members/it/vedadkeskin.png" }
   ],
   HR: [
     { name: "Šejla Grcić", imageSrc: "/default-profile.png" },
