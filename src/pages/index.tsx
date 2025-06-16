@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
-
+import Cookies from "js-cookie";
 import bg from "@/assets/images/best-motto.svg";
 import AboutSection from "@/components/About/AboutSection";
 import MissionSection from "@/components/Mission/MissionSection";
@@ -8,6 +8,11 @@ import MilestoneBar from "@/components/MilestoneBar/MilestoneBar";
 import TestimonialSection from "@/components/Testimonial/TestimonialSection";
 import Projects from "@/components/Projects/Projects";
 import PartnersSection from "@/components/Partners/PartnersSection";
+
+
+
+
+
 
 export default function Home() {
   return (

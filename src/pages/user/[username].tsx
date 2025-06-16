@@ -66,7 +66,7 @@ const UserPage = () => {
             <p className="text-xl font-semibold">
               {userData.firstName} {userData.lastName}
             </p>
-            <p>{userData.role || "User"}</p>
+            
           </div>
         </div>
       </div>

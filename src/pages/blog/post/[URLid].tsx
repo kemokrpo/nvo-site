@@ -51,7 +51,7 @@ const BlogPostPage = () => {
           filter: `uid = "${URLid}" && postType = "blog" && isPublished = true`,
           limit: 1,
         });
-        console.log("Fetched records:", records);
+
         if (!isMounted) return;
 
         if (records.length === 0) {
