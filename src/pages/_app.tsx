@@ -8,6 +8,7 @@ import HackathonLayout from "@/pages/hackathon/components/Layout/Layout";
 import CourseLayout from "@/pages/course/components/Layout/Layout";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { AuthProvider } from "@/context/AuthContext";
+import Head from "next/head";
 
 // Create the Unlock Context
 const UnlockContext = createContext<{
@@ -52,6 +53,10 @@ export default function App({ Component, pageProps }: AppProps) {
   }
 
   return (
+    <>
+    <Head>
+      <title>BEST Mostar</title>
+    </Head>
     <UnlockContext.Provider value={{ isUnlocked, setUnlocked }}>
       <LanguageProvider>
         <AuthProvider>
@@ -61,5 +66,6 @@ export default function App({ Component, pageProps }: AppProps) {
         </AuthProvider>
       </LanguageProvider>
     </UnlockContext.Provider>
+    </>
   );
 }
