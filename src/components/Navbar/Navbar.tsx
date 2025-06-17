@@ -23,6 +23,8 @@ const content = {
     LogIn: "Log In",
     Register: "Register",
     becomeBestie: "Become BESTie",
+    Board: "Board",
+    Teams: "Teams",
   },
   bs: {
     Join: "Pridruzi nam se",
@@ -38,6 +40,8 @@ const content = {
     LogIn: "Prijavi se",
     Register: "Registruj se",
     becomeBestie: "Postani BESTovac",
+    Board: "Upravni odbor",
+    Teams: "Timovi",
   },
 };
 
@@ -104,7 +108,7 @@ const Navbar = () => {
           <div
             className={`absolute p-5 bg-main-700 z-30 top-10 translate-x-[-1rem] translate-y-[-1rem] flex flex-col gap-4 rounded-md text-sm w-[11rem] ${oNamaOpen ? "block" : "hidden"}`}
           >
-            <Link href="/about" className="hover:underline">BEST Mostar</Link>
+            <Link href="/about/board" className="hover:underline">{content[language].Board}</Link>
             <Link href="/about/teams" className="hover:underline">{content[language].Timovi}</Link>
             <Link href="https://www.best.eu.org/index.jsp" className="hover:underline">BEST International</Link>
           </div>
@@ -173,7 +177,7 @@ const Navbar = () => {
           </button>
           {oNamaOpen && (
             <div className="absolute p-5 bg-main-700 z-30 top-0 right-0 flex flex-col gap-4 rounded-md text-sm w-[11rem] translate-y-[-1rem]">
-              <Link href="/about" className="hover:underline">BEST Mostar</Link>
+              <Link href="/about/board" className="hover:underline">{content[language].Board}</Link>
               <Link href="/about/teams" className="hover:underline">{content[language].Timovi}</Link>
               <Link href="https://www.best.eu.org/index.jsp" className="hover:underline">BEST International</Link>
             </div>

@@ -62,7 +62,7 @@ const Footer: FC = () => {
       <div className="flex flex-col">
         <h2 className="text-xl text-gray-100 mb-3">{content[language].Mob}</h2>
         <h3 className="text-gray-300 underline text-lg break-words">
-          +387 62 111 111
+          +387 62 556 586
         </h3>
       </div>
       <div className="flex flex-col">
