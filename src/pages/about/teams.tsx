@@ -20,24 +20,17 @@ const teamMembers = {
     { name: "Nudžejma Lopo", imageSrc: "/members/it/nudzejmalopo.png" }
   ],
   HR: [
-    { name: "Šejla Grcić", imageSrc: "/default-profile.png" },
-    { name: "Tea Domazet", imageSrc: "/default-profile.png" },
-    { name: "Maja Kovačević", imageSrc: "/default-profile.png" }
+    { name: "Kemo Krpo", imageSrc: "/members/it/kemokrpo.jpg" }
   ],
   FR: [
-    { name: "Dino Šehić", imageSrc: "/default-profile.png" },
-    { name: "Maja Kovačević", imageSrc: "/default-profile.png" },
-    { name: "Nina Jurišić", imageSrc: "/default-profile.png" }
+    { name: "Adla Blagajac", imageSrc: "/default-profile.png" },
+    { name: "Kemo Krpo", imageSrc: "/members/it/kemokrpo.jpg" },
   ],
   PR: [
-    { name: "Šejla Grcić", imageSrc: "/default-profile.png" },
-    { name: "Maja Kovačević", imageSrc: "/default-profile.png" },
-    { name: "Nina Jurišić", imageSrc: "/default-profile.png" }
+    { name: "Kemo Krpo", imageSrc: "/members/it/kemokrpo.jpg" }
   ],
   DT: [
-    { name: "Dino Šehić", imageSrc: "/default-profile.png" },
-    { name: "Maja Kovačević", imageSrc: "/default-profile.png" },
-    { name: "Nina Jurišić", imageSrc: "/default-profile.png" }
+    { name: "Kemo Krpo", imageSrc: "/members/it/kemokrpo.jpg" },
   ],
 };
 type Content = {
@@ -149,37 +142,61 @@ const Teams: NextPage = () => {
       </p>
 
       <div className="flex justify-center flex-wrap gap-10 pt-20">
-        <div onClick={() => openModal("IT")} className="cursor-pointer">
+        <div>
           <TeamCard
-            icon={<IconLaptop width={64} />}
+            icon={
+              <span onClick={() => openModal("IT")} 
+               className="cursor-pointer">
+                <IconLaptop width={64} />
+
+              </span>
+              }
             text={content[language].IT}
             description={content[language].ITD}
           />
         </div>
-        <div onClick={() => openModal("HR")} className="cursor-pointer">
+        <div>
           <TeamCard
-            icon={<IconHandshake width={64} />}
+            icon={
+            <span onClick={() => openModal("HR")}
+              className="cursor-pointer">
+
+            <IconHandshake width={64} />
+            </span>
+            }
             text={content[language].HR}
             description={content[language].HRD}
           />
         </div>
-        <div onClick={() => openModal("FR")} className="cursor-pointer">
+        <div>
           <TeamCard
-            icon={<IconFundraising width={64} />}
+            icon={
+            <span onClick={() => openModal("FR")}
+              className="cursor-pointer">
+            <IconFundraising width={64} />
+            </span>}
             text={content[language].FR}
             description={content[language].FRD}
           />
         </div>
-        <div onClick={() => openModal("PR")} className="cursor-pointer">
+        <div>
           <TeamCard
-            icon={<IconMegaphone width={64} />}
+            icon={
+            <span onClick={() => openModal("PR")}
+              className="cursor-pointer">
+            <IconMegaphone width={64} />
+            </span>}
             text={content[language].PR}
             description={content[language].PRD}
           />
         </div>
-        <div onClick={() => openModal("DT")} className="cursor-pointer">
+        <div>
           <TeamCard
-            icon={<IconDesign width={64} />}
+            icon={
+            <span onClick={() => openModal("DT")}
+              className="cursor-pointer">
+            <IconDesign width={64} />
+            </span>}
             text={content[language].DT}
             description={content[language].DTD}
           />

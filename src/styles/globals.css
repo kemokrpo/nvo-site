@@ -21,6 +21,22 @@ body {
   clip-path: polygon(10 0, 90% 0, 90% 100%, 0% 100%);
   bottom: -2px;
 }
+.glow-bright:hover {
+  box-shadow: 0 0 8px 3px rgba(255, 0, 0, 0.7);
+}
+
+.icon-glow {
+  filter: drop-shadow(0 0 3px rgba(252, 165, 165, 0.0)); /* red-300 glow */
+  transition: filter 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  color: inherit; /* ensures fill="inherit" works */
+}
+
+.icon-glow:hover {
+  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.8)); /* red-500 stronger glow */
+  
+  transform: scale(1.1);
+}
+
 
 @media (min-width: 768px) {
   .custom-clip-path {
