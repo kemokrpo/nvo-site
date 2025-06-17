@@ -32,9 +32,9 @@ body {
 }
 
 .icon-glow:hover {
-  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.8)); /* red-500 stronger glow */
-  
-  transform: scale(1.1);
+  filter: drop-shadow(0 0 6px rgba(230, 68, 68, 0.8)); /* red-500 stronger glow */
+  fill: rgba(255, 68, 68, 0.8); /* red-500 color */
+  transform: scale(1.2);
 }
 
 
