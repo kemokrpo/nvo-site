@@ -8,9 +8,12 @@ import MilestoneBar from "@/components/MilestoneBar/MilestoneBar";
 import TestimonialSection from "@/components/Testimonial/TestimonialSection";
 import Projects from "@/components/Projects/Projects";
 import PartnersSection from "@/components/Partners/PartnersSection";
+import PocketBase from "pocketbase";
 
 
-
+console.log("Teting PB .env:", process.env.NEXT_PUBLIC_PB_URL);
+const pb = new PocketBase(process.env.NEXT_PUBLIC_PB_URL);
+console.log("PocketBase instance created:", pb);
 
 
 
