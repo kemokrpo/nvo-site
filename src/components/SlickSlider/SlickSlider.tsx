@@ -80,7 +80,7 @@ const SlickSlider: React.FC<SlickSliderProps> = ({
               key={index}
               onClick={() => goToSlide(index)}
               className={`h-2 w-2 rounded-full transition-colors duration-300 ${
-                index === currentIndex ? "bg-blue-500" : "bg-gray-300"
+                index === currentIndex ? "bg-red-600" : "bg-red-300"
               }`}
             ></button>
           ))}
