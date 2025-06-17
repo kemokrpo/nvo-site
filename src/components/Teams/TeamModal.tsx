@@ -23,7 +23,7 @@ const TeamModal: FC<TeamModalProps> = ({ isOpen, onClose, title, description, me
       onClick={onClose}
     >
       <div
-        className="bg-white dark:bg-dt-dark p-6 rounded-lg max-w-md w-full relative"
+        className="bg-white dark:bg-dbg-dark text-dt-light dark:text-dt-dark p-6 rounded-lg max-w-md w-full relative"
         onClick={(e) => e.stopPropagation()}
       >
         <button
