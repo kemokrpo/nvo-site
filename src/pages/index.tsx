@@ -11,9 +11,7 @@ import PartnersSection from "@/components/Partners/PartnersSection";
 import PocketBase from "pocketbase";
 
 
-console.log("Teting PB .env:", process.env.NEXT_PUBLIC_PB_URL);
-const pb = new PocketBase(process.env.NEXT_PUBLIC_PB_URL);
-console.log("PocketBase instance created:", pb);
+console.log("Easter Egg: You found the secret message! PoKéMoN! Gotta catch 'em all! Gotta catch 'em all! PoKéMoN!");
 
 
 
