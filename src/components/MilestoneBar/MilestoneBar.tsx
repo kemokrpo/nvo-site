@@ -27,8 +27,8 @@ const content: Content = {
   },
   bs: {
     Osnivanje: `Osnivanje lokalne grupe BEST Mostar - 2011`,
-    Baby: `Status baby clana lokalne grupe - 2011`,
-    Full: `Status punopravnog clana lokalne grupe - 2011`,
+    Baby: `Status baby clana lokalne grupe - 2012`,
+    Full: `Status punopravnog clana lokalne grupe - 2013`,
     Baby2: `Status baby clana lokalne grupe - 2015`,
     Full2: `Status punopravnog clana lokalne grupe - 2016`,
   }
