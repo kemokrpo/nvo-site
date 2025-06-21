@@ -148,13 +148,13 @@ const Navbar = () => {
               <>
                 <Link href="/profile" className="hover:underline">{content[language].Me}</Link>
                 <h1 onClick={handleLogout} className="hover:underline cursor-pointer">{content[language].LogOut}</h1>
-                <Link href="/" className="hover:underline">{content[language].becomeBestie}</Link>
+                <Link href="https://docs.google.com/forms/d/1Lq99L6OQwJ39kQnpmowt8XCQ58pTEpnkxIlgALwImj8/viewform?edit_requested=true" target="_blank" className="hover:underline">{content[language].becomeBestie}</Link>
               </>
             ) : (
               <>
                 <Link href="/register" className="hover:underline">{content[language].Register}</Link>
                 <Link href="/login" className="hover:underline">{content[language].LogIn}</Link>
-                <Link href="/" className="hover:underline">{content[language].becomeBestie}</Link>
+                <Link href="https://docs.google.com/forms/d/1Lq99L6OQwJ39kQnpmowt8XCQ58pTEpnkxIlgALwImj8/viewform?edit_requested=true" target="_blank" className="hover:underline">{content[language].becomeBestie}</Link>
               </>
             )}
           </div>
@@ -209,13 +209,13 @@ const Navbar = () => {
                 <>
                   <Link href="/profile" className="hover:underline">{content[language].Me}</Link>
                   <h1 onClick={handleLogout} className="hover:underline">{content[language].LogOut}</h1>
-                  <Link href="/" className="hover:underline">{content[language].becomeBestie}</Link>
+                  <Link href="https://docs.google.com/forms/d/1Lq99L6OQwJ39kQnpmowt8XCQ58pTEpnkxIlgALwImj8/viewform?edit_requested=true" target="_blank" className="hover:underline">{content[language].becomeBestie}</Link>
                 </>
               ) : (
                 <>
                   <Link href="/register" className="hover:underline">{content[language].Register}</Link>
                   <Link href="/login" className="hover:underline">{content[language].LogIn}</Link>
-                  <Link href="/" className="hover:underline">{content[language].becomeBestie}</Link>
+                  <Link href="https://docs.google.com/forms/d/1Lq99L6OQwJ39kQnpmowt8XCQ58pTEpnkxIlgALwImj8/viewform?edit_requested=true" target="_blank" className="hover:underline">{content[language].becomeBestie}</Link>
                 </>
               )}
             </div>
