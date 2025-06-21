@@ -6,7 +6,7 @@ const boardMembers = [
   { name: "Armin Hadrović", title: "Treasurer", imageSrc: "/members/board/treasurer.png" },
   { name: "Tarik Štrkljević", title: "Secretary", imageSrc: "/members/board/secretary.png" },
   { name: "Aida Fetić", title: "Vice President for Human Resources", imageSrc: "/members/board/hr.png" },
-  { name: "Kemo Krpo", title: "Vice President for Information Technologies", imageSrc: "/members/it/kemokrpo.jpg" },
+  { name: "Kemo Krpo", title: "Vice President for Information Technologies", imageSrc: "/members/board/it.png}" },
 ];
 
 const managementMembers = [
