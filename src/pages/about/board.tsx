@@ -2,17 +2,17 @@ import { NextPage } from "next";
 import Image from "next/image";
 
 const boardMembers = [
-  { name: "Medina Raljević", title: "President", imageSrc: "/members/board/member1.jpg" },
-  { name: "Armin Hadrović", title: "Treasurer", imageSrc: "/members/board/member4.jpg" },
-  { name: "Tarik Štrkljević", title: "Secretary", imageSrc: "/members/board/member3.jpg" },
-  { name: "Aida Fetić", title: "Vice President for Human Resources", imageSrc: "/members/board/member5.jpg" },
+  { name: "Medina Raljević", title: "President", imageSrc: "/members/board/president.png" },
+  { name: "Armin Hadrović", title: "Treasurer", imageSrc: "/members/board/treasurer.png" },
+  { name: "Tarik Štrkljević", title: "Secretary", imageSrc: "/members/board/secretary.png" },
+  { name: "Aida Fetić", title: "Vice President for Human Resources", imageSrc: "/members/board/hr.png" },
   { name: "Kemo Krpo", title: "Vice President for Information Technologies", imageSrc: "/members/it/kemokrpo.jpg" },
 ];
 
 const managementMembers = [
-  { name: "Tarik Ganić", title: "Project Coordinator", imageSrc: "/members/management/manager1.jpg" },
-  { name: "Mejrem Halilović", title: "Angels Coordinator", imageSrc: "/members/management/manager2.jpg" },
-  { name: "Enis Džemidžić", title: "Knowledge Management Coordinator", imageSrc: "/members/management/manager3.jpg" },
+  { name: "Tarik Ganić", title: "Project Coordinator", imageSrc: "/members/board/pc.png" },
+  { name: "Mejrem Halilović", title: "Angels Coordinator", imageSrc: "/members/board/ac.png" },
+  { name: "Enis Džemidžić", title: "Knowledge Management Coordinator", imageSrc: "/members/board/km.png" },
 ];
 
 const MembersPage: NextPage = () => {
