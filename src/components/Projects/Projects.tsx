@@ -58,7 +58,7 @@ const Projects: FC = () => {
         <span className="fill-white dark:fill-dt-dark">
           <IconProject width={100} />
         </span>
-        <h4 className="text-3xl text-white font-bold dark:text-dt-dark">3</h4>
+        <h4 className="text-3xl text-white font-bold dark:text-dt-dark">4</h4>
         <h3 className="text-xl text-white dark:text-dt-dark">{content[language].Projects}</h3>
       </div>
       <div className="flex flex-col items-center gap-3">
