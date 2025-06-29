@@ -27,7 +27,8 @@ const teamMembers = {
     { name: "Kemo Krpo", imageSrc: "/members/it/kemokrpo.jpg" },
   ],
   PR: [
-    { name: "Kemo Krpo", imageSrc: "/members/it/kemokrpo.jpg" }
+    { name: "Kemo Krpo", imageSrc: "/members/it/kemokrpo.jpg" },
+    { name: "Feras Karašin", imageSrc: "/default-profile.png" }
   ],
   DT: [
     { name: "Kemo Krpo", imageSrc: "/members/it/kemokrpo.jpg" },
