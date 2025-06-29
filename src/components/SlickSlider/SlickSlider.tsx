@@ -26,6 +26,7 @@ const SlickSlider: React.FC<SlickSliderProps> = ({
     }, autoplayInterval);
     return () => clearInterval(interval);
   }, [autoplay, autoplayInterval, images.length]);
+
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
@@ -41,13 +42,13 @@ const SlickSlider: React.FC<SlickSliderProps> = ({
   return (
     <div className="relative w-full max-w-3xl mx-auto">
       {/* Image Container */}
-      <div className="relative h-64 overflow-hidden bg-gray-100 rounded-lg shadow-lg flex justify-center items-center">
+      <div className="relative overflow-hidden bg-gray-100 rounded-lg shadow-lg flex justify-center items-center aspect-video">
         {images.map((image, index) => (
           <img
             key={index}
             src={image}
             alt={`Slide ${index}`}
-            className={`absolute h-full w-full object-contain transition-opacity duration-500 ${
+            className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-500 ${
               index === currentIndex ? "opacity-100" : "opacity-0"
             }`}
           />
@@ -55,7 +56,7 @@ const SlickSlider: React.FC<SlickSliderProps> = ({
       </div>
 
       {/* Arrows */}
-      {options.showArrows && (
+      {showArrows && (
         <>
           <button
             onClick={handlePrev}
@@ -73,7 +74,7 @@ const SlickSlider: React.FC<SlickSliderProps> = ({
       )}
 
       {/* Dots */}
-      {options.showDots && (
+      {showDots && (
         <div className="flex justify-center mt-4 space-x-2">
           {images.map((_, index) => (
             <button
