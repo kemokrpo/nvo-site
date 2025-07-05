@@ -38,6 +38,7 @@ type Content = {
   en: {
     Teams:string;
     BestTeams:string;
+    TeamsInBEST:string;
     IT:string;
     HR:string;
     FR:string;
@@ -52,6 +53,7 @@ type Content = {
   bs: {
     Teams:string;
     BestTeams:string;
+    TeamsInBEST:string;
     IT:string;
     HR:string;
     FR:string;
@@ -69,6 +71,7 @@ const content: Content = {
   en: {
     Teams:`Teams`,
     BestTeams:`Teams in BEST`,
+    TeamsInBEST:`Teams within BEST Mostar include the following: Information Technologies Team, Human Resources Team, Fundraising Team, Public Relations Team, and Design Team.`,
     IT:`IT Team`,
     HR:`HR Team`,
     FR:`FR Team`,
@@ -83,6 +86,7 @@ const content: Content = {
   bs: {
     Teams:`Timovi`,
     BestTeams:`Timovi unutar BEST-a`,
+    TeamsInBEST:`Timovi unutar BEST-a Mostar uključuju sljedeće: Tim za informacijske tehnologije, Tim za ljudske resurse, Tim za prikupljanje sredstava, Tim za odnose s javnošću i Tim za dizajn.`,
     IT:`IT Tim`,
     HR:`HR Tim`,
     FR:`FR Tim`,
@@ -129,17 +133,7 @@ const Teams: NextPage = () => {
         {content[language].BestTeams}
       </h2>
       <p className="text-gray-700 dark:text-dt-dark mt-3 text-justify">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus
-        pariatur, facere maiores unde error rerum dolorum dolorem enim eius
-        fugiat porro odit, earum a. Beatae perferendis, possimus asperiores at
-        est debitis. Est, nulla animi minus adipisci quis fugiat aspernatur
-        perferendis magnam autem aperiam rerum officiis laboriosam ut illo, rem
-        similique deleniti quod dicta deserunt, error porro dolore quisquam ab
-        blanditiis. Velit nulla repellat ullam quis recusandae. Quos mollitia
-        aliquam nesciunt accusantium minima beatae atque vitae, harum, rem at,
-        ad commodi animi maxime voluptate consequatur! Praesentium reiciendis,
-        ad, nostrum dignissimos error odio harum ex sit fugiat, possimus
-        voluptatibus sed nobis? Ipsa?
+        {content[language].TeamsInBEST}
       </p>
 
       <div className="flex justify-center flex-wrap gap-10 pt-20">

@@ -43,9 +43,7 @@ export default function Home() {
           <MissionSection />
           <AboutSection />
           <MilestoneBar />
-          {/*
-            <TestimonialSection />
-          */}
+          <TestimonialSection />
           <Projects />
           {/*<PartnersSection />*/}
         </div>
