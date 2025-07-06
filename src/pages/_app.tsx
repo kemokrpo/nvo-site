@@ -10,37 +10,11 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { AuthProvider } from "@/context/AuthContext";
 import Head from "next/head";
 
-// Create the Unlock Context
-const UnlockContext = createContext<{
-  isUnlocked: boolean;
-  setUnlocked: (unlocked: boolean) => void;
-}>({
-  isUnlocked: false,
-  setUnlocked: () => {},
-});
 
-// Export a hook to use the unlock context
-export const useUnlock = () => useContext(UnlockContext);
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [isUnlocked, setUnlocked] = useState(false); // Global unlock state
-
-  // Log unlock state for debugging
-  useEffect(() => {
-    console.log("isUnlocked state:", isUnlocked);
-  }, [isUnlocked]);
-
-  // Redirect logic
-  useEffect(() => {
-    const currentPath = router.pathname;
-
-    if (!isUnlocked && currentPath !== "/countdown") {
-      router.push("/countdown");
-    } else if (isUnlocked && currentPath === "/countdown") {
-      router.push("/"); // Redirect back to homepage if unlocked
-    }
-  }, [isUnlocked, router]);
+ 
 
   // Layout selection
   let SelectedLayout = Layout;
@@ -78,7 +52,7 @@ export default function App({ Component, pageProps }: AppProps) {
           }}
         />
     </Head>
-    <UnlockContext.Provider value={{ isUnlocked, setUnlocked }}>
+   
       <LanguageProvider>
         <AuthProvider>
           <SelectedLayout>
@@ -86,7 +60,7 @@ export default function App({ Component, pageProps }: AppProps) {
           </SelectedLayout>
         </AuthProvider>
       </LanguageProvider>
-    </UnlockContext.Provider>
+    
     </>
   );
 }
