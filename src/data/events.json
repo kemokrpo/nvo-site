@@ -1,0 +1,23 @@
+[
+  {
+    "year": 2025,
+    "title": "Hackathon 2025",
+    "image": "/images/events/hackathon2025.jpg",
+    "description": "50-hour hackathon where students created innovative solutions.",
+    "subdomain": "hackathon2025"
+  },
+  {
+    "year": 2024,
+    "title": "JobFair & Softskills Academy 2024",
+    "image": "/images/events/jobfair2024.jpg",
+    "description": "A job fair with 10+ companies from the region.",
+    "subdomain": "jobfair2024"
+  },
+  {
+    "year": 2023,
+    "title": "Spring Course 2023: Road To Cyber Security",
+    "image": "/images/events/springcourse2023.jpg",
+    "description": "International BEST course with students from 20 countries.",
+    "subdomain": "course2023"
+  }
+]

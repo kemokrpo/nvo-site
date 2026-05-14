@@ -3,11 +3,8 @@ import type { AppProps } from "next/app";
 import { createContext, useState, useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "@/components/Layout/Layout";
-import JobFairLayout from "@/pages/jobfair/components/Layout/Layout";
-import HackathonLayout from "@/pages/hackathon/components/Layout/Layout";
-import CourseLayout from "@/pages/course/components/Layout/Layout";
 import { LanguageProvider } from "@/context/LanguageContext";
-import { AuthProvider } from "@/context/AuthContext";
+
 import Head from "next/head";
 
 
@@ -18,13 +15,6 @@ export default function App({ Component, pageProps }: AppProps) {
 
   // Layout selection
   let SelectedLayout = Layout;
-  if (router.pathname.startsWith("/jobfair")) {
-    SelectedLayout = JobFairLayout;
-  } else if (router.pathname.startsWith("/hackathon")) {
-    SelectedLayout = HackathonLayout;
-  } else if (router.pathname.startsWith("/course")) {
-    SelectedLayout = CourseLayout;
-  }
 
   return (
     <>
@@ -54,11 +44,9 @@ export default function App({ Component, pageProps }: AppProps) {
     </Head>
    
       <LanguageProvider>
-        <AuthProvider>
-          <SelectedLayout>
-            <Component {...pageProps} />
-          </SelectedLayout>
-        </AuthProvider>
+        <SelectedLayout>
+           <Component {...pageProps} />
+        </SelectedLayout>
       </LanguageProvider>
     
     </>
